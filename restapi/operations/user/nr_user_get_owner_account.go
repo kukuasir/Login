@@ -7,8 +7,12 @@ package user
 
 import (
 	"net/http"
-
-	middleware "github.com/go-openapi/runtime/middleware"
+	_"github.com/jinzhu/gorm"
+	_"github.com/jinzhu/gorm/dialects/mysql"
+	"github.com/go-openapi/runtime/middleware"
+	"Login/models"
+	"Login/utils"
+	"fmt"
 )
 
 // NrUserGetOwnerAccountHandlerFunc turns a function with the right signature into a user get owner account handler
@@ -51,7 +55,24 @@ func (o *NrUserGetOwnerAccount) ServeHTTP(rw http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	res := o.Handler.Handle(Params) // actually handle the request
+	//res := o.Handler.Handle(Params) // actually handle the request
+
+	db, err := utils.OpenConnection()
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	defer db.Close()
+
+	var res models.AccountState
+	var state models.State
+	var user models.Account
+
+	sql := "SELECT current_coins, current_points, current_rmb FROM btk_User WHERE euid = ? AND status = 0"
+	db.Raw(sql, Params.Euid).Find(&user)
+	res.Data = &user
+
+	state.UnmarshalBinary([]byte(utils.Response200(200, "查询成功")))
+	res.State = &state
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 

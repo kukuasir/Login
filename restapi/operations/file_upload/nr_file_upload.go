@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	middleware "github.com/go-openapi/runtime/middleware"
+	"Login/models"
 )
 
 // NrFileUploadHandlerFunc turns a function with the right signature into a file upload handler
@@ -51,7 +52,9 @@ func (o *NrFileUpload) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := o.Handler.Handle(Params) // actually handle the request
+	//res := o.Handler.Handle(Params) // actually handle the request
+
+	var res models.FileUploadOKBody
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 

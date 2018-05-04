@@ -92,9 +92,12 @@ func (o *NrPassportQuickLogin) ServeHTTP(rw http.ResponseWriter, r *http.Request
 				code = 200
 				message = "登录成功"
 
+				euid_str := utils.GenEuidBy(*Params.Body.Phone)
+				nick_name_str := utils.GenNickNameBy(*Params.Body.Phone)
+
 				// 第一次快捷登录，需要把信息写入到表中
-				user.Euid = utils.GenEuidBy(*Params.Body.Phone)
-				user.NickName = utils.GenNickNameBy(*Params.Body.Phone)
+				user.Euid = &euid_str
+				user.NickName = &nick_name_str
 				user.Phone = Params.Body.Phone
 				user.RegisterAt = time.Now().Unix()
 				user.LoginAt = user.RegisterAt
