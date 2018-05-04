@@ -1,0 +1,1133 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "通用授权模块",
+    "version" : "1.0.0",
+    "title" : "Login(Api)"
+  },
+  "host" : "virtserver.swaggerhub.com",
+  "tags" : [ {
+    "name" : "Passport",
+    "description" : "用户授权"
+  }, {
+    "name" : "User",
+    "description" : "用户信息"
+  } ],
+  "paths" : {
+    "/passport/sendSms" : {
+      "post" : {
+        "tags" : [ "Passport" ],
+        "summary" : "下发短信验证码",
+        "description" : "下发短息验证码",
+        "operationId" : "/passport/sendSms",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "body",
+          "in" : "body",
+          "description" : "下发短信验证码请求JSON",
+          "schema" : {
+            "required" : [ "phone" ],
+            "properties" : {
+              "version" : {
+                "type" : "string",
+                "description" : "版本号"
+              },
+              "imei" : {
+                "type" : "string",
+                "description" : "唯一识别号"
+              },
+              "client" : {
+                "type" : "string",
+                "description" : "客户端类型"
+              },
+              "val" : {
+                "type" : "string",
+                "description" : "加密串"
+              },
+              "ts" : {
+                "type" : "integer",
+                "format" : "int64",
+                "description" : "时间戳(加密串要用到,供服务端验证，简单防刷)"
+              },
+              "phone" : {
+                "type" : "string",
+                "description" : "手机号"
+              },
+              "type" : {
+                "type" : "integer",
+                "format" : "int64",
+                "description" : "下发验证码的方式(0:注册 1:快捷登录 2:绑定手机号 3:找回密码)"
+              }
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "验证码发送成功",
+            "schema" : {
+              "$ref" : "#/definitions/State"
+            }
+          },
+          "default" : {
+            "description" : "error",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/passport/login" : {
+      "post" : {
+        "tags" : [ "Passport" ],
+        "summary" : "登录接口",
+        "description" : "登录接口",
+        "operationId" : "/passport/login",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "body",
+          "in" : "body",
+          "description" : "用户登录JSON",
+          "schema" : {
+            "required" : [ "phone", "password" ],
+            "properties" : {
+              "version" : {
+                "type" : "string",
+                "description" : "版本号"
+              },
+              "imei" : {
+                "type" : "string",
+                "description" : "唯一识别号"
+              },
+              "client" : {
+                "type" : "string",
+                "description" : "客户端类型"
+              },
+              "val" : {
+                "type" : "string",
+                "description" : "加密串"
+              },
+              "ts" : {
+                "type" : "integer",
+                "format" : "int64",
+                "description" : "时间戳(加密串要用到,供服务端验证，简单防刷)"
+              },
+              "phone" : {
+                "type" : "string",
+                "description" : "登录手机号"
+              },
+              "password" : {
+                "type" : "string",
+                "description" : "登录密码"
+              }
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "登录成功，返回登录信息",
+            "schema" : {
+              "$ref" : "#/definitions/LoginState"
+            }
+          },
+          "default" : {
+            "description" : "error",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/passport/quickLogin" : {
+      "post" : {
+        "tags" : [ "Passport" ],
+        "summary" : "快捷登录接口",
+        "description" : "快捷登录接口",
+        "operationId" : "/passport/quickLogin",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "body",
+          "in" : "body",
+          "description" : "快捷登录JSON",
+          "schema" : {
+            "required" : [ "phone", "valid_code" ],
+            "properties" : {
+              "version" : {
+                "type" : "string",
+                "description" : "版本号"
+              },
+              "imei" : {
+                "type" : "string",
+                "description" : "唯一识别号"
+              },
+              "client" : {
+                "type" : "string",
+                "description" : "客户端类型"
+              },
+              "val" : {
+                "type" : "string",
+                "description" : "加密串"
+              },
+              "ts" : {
+                "type" : "integer",
+                "format" : "int64",
+                "description" : "时间戳(加密串要用到,供服务端验证，简单防刷)"
+              },
+              "phone" : {
+                "type" : "string",
+                "description" : "手机号"
+              },
+              "valid_code" : {
+                "type" : "string",
+                "description" : "手机验证码，快捷登录方式可用"
+              }
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "登录成功，返回登录信息",
+            "schema" : {
+              "$ref" : "#/definitions/LoginState"
+            }
+          },
+          "default" : {
+            "description" : "error",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/passport/loginByThirdParty" : {
+      "post" : {
+        "tags" : [ "Passport" ],
+        "summary" : "第三方登录",
+        "description" : "第三方登录",
+        "operationId" : "/passport/loginByThirdParty",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "body",
+          "in" : "body",
+          "description" : "第三方登录JSON",
+          "schema" : {
+            "required" : [ "type", "open_id" ],
+            "properties" : {
+              "version" : {
+                "type" : "string",
+                "description" : "版本号"
+              },
+              "imei" : {
+                "type" : "string",
+                "description" : "唯一识别号"
+              },
+              "client" : {
+                "type" : "string",
+                "description" : "客户端类型"
+              },
+              "val" : {
+                "type" : "string",
+                "description" : "加密串"
+              },
+              "ts" : {
+                "type" : "integer",
+                "format" : "int64",
+                "description" : "时间戳(加密串要用到,供服务端验证，简单防刷)"
+              },
+              "type" : {
+                "type" : "integer",
+                "format" : "int64",
+                "description" : "第三方登录方式 0=微信,1=QQ,2=微博,3=其他"
+              },
+              "platform" : {
+                "type" : "string",
+                "description" : "第三方登录平台，当type=3时，需要传入platform来判断从哪个平台登入"
+              },
+              "open_id" : {
+                "type" : "string",
+                "description" : "开放平台唯一ID"
+              },
+              "name" : {
+                "type" : "string",
+                "description" : "第三方平台用户用户名"
+              },
+              "avatar" : {
+                "type" : "string",
+                "description" : "第三方平台用户头像"
+              }
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "返回登录成功信息",
+            "schema" : {
+              "$ref" : "#/definitions/LoginState"
+            }
+          },
+          "default" : {
+            "description" : "error",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/passport/register" : {
+      "post" : {
+        "tags" : [ "Passport" ],
+        "summary" : "注册接口",
+        "description" : "注册接口",
+        "operationId" : "/passport/register",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "body",
+          "in" : "body",
+          "description" : "用户注册JSON",
+          "schema" : {
+            "required" : [ "phone", "password", "valid_code" ],
+            "properties" : {
+              "version" : {
+                "type" : "string",
+                "description" : "版本号"
+              },
+              "imei" : {
+                "type" : "string",
+                "description" : "唯一识别号"
+              },
+              "client" : {
+                "type" : "string",
+                "description" : "客户端类型"
+              },
+              "val" : {
+                "type" : "string",
+                "description" : "加密串"
+              },
+              "ts" : {
+                "type" : "integer",
+                "format" : "int64",
+                "description" : "时间戳(加密串要用到,供服务端验证，简单防刷)"
+              },
+              "phone" : {
+                "type" : "string",
+                "description" : "注册手机号"
+              },
+              "password" : {
+                "type" : "string",
+                "description" : "注册密码"
+              },
+              "valid_code" : {
+                "type" : "string",
+                "description" : "手机验证码，快捷登录方式可用"
+              },
+              "nick_name" : {
+                "type" : "string",
+                "description" : "用户昵称，最大11个字符"
+              },
+              "gender" : {
+                "type" : "integer",
+                "format" : "int64",
+                "description" : "用户性别 (0:保密 1:男 2:女)"
+              },
+              "birth_day" : {
+                "type" : "string",
+                "description" : "生日(格式必须为:yyyy-MM-dd)"
+              },
+              "invite_code" : {
+                "type" : "string",
+                "description" : "邀请码"
+              }
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "注册成功，返回注册成功信息",
+            "schema" : {
+              "$ref" : "#/definitions/RegisterState"
+            }
+          },
+          "default" : {
+            "description" : "error",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/passport/getbackPwd" : {
+      "post" : {
+        "tags" : [ "Passport" ],
+        "summary" : "找回密码接口",
+        "description" : "找回密码接口",
+        "operationId" : "/passport/getbackPwd",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "body",
+          "in" : "body",
+          "description" : "找回密码JSON",
+          "schema" : {
+            "required" : [ "phone", "valid_code", "password" ],
+            "properties" : {
+              "version" : {
+                "type" : "string",
+                "description" : "版本号"
+              },
+              "imei" : {
+                "type" : "string",
+                "description" : "唯一识别号"
+              },
+              "client" : {
+                "type" : "string",
+                "description" : "客户端类型"
+              },
+              "val" : {
+                "type" : "string",
+                "description" : "加密串"
+              },
+              "ts" : {
+                "type" : "integer",
+                "format" : "int64",
+                "description" : "时间戳(加密串要用到,供服务端验证，简单防刷)"
+              },
+              "phone" : {
+                "type" : "string",
+                "description" : "手机号"
+              },
+              "valid_code" : {
+                "type" : "string",
+                "description" : "手机验证码，快捷登录方式可用"
+              },
+              "password" : {
+                "type" : "string",
+                "description" : "新密码"
+              }
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "返回成功信息",
+            "schema" : {
+              "$ref" : "#/definitions/State"
+            }
+          },
+          "default" : {
+            "description" : "error",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/passport/bindMobile" : {
+      "post" : {
+        "tags" : [ "Passport" ],
+        "summary" : "绑定手机号接口",
+        "description" : "绑定手机号接口",
+        "operationId" : "/passport/bindMobile",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "body",
+          "in" : "body",
+          "description" : "绑定手机号JSON",
+          "schema" : {
+            "required" : [ "phone", "valid_code" ],
+            "properties" : {
+              "version" : {
+                "type" : "string",
+                "description" : "版本号"
+              },
+              "imei" : {
+                "type" : "string",
+                "description" : "唯一识别号"
+              },
+              "client" : {
+                "type" : "string",
+                "description" : "客户端类型"
+              },
+              "val" : {
+                "type" : "string",
+                "description" : "加密串"
+              },
+              "ts" : {
+                "type" : "integer",
+                "format" : "int64",
+                "description" : "时间戳(加密串要用到,供服务端验证，简单防刷)"
+              },
+              "phone" : {
+                "type" : "string",
+                "description" : "手机号"
+              },
+              "valid_code" : {
+                "type" : "string",
+                "description" : "手机验证码"
+              }
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "绑定成功，返回成功信息",
+            "schema" : {
+              "$ref" : "#/definitions/State"
+            }
+          },
+          "default" : {
+            "description" : "error",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/user/getOwnerAccount" : {
+      "get" : {
+        "tags" : [ "User" ],
+        "summary" : "查看用户账户信息",
+        "operationId" : "/user/getOwnerAccount",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "euid",
+          "type" : "string",
+          "required" : true,
+          "description" : "加密后的用户ID"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "返回成功信息",
+            "schema" : {
+              "$ref" : "#/definitions/AccountState"
+            }
+          },
+          "default" : {
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            },
+            "description" : "返回错误"
+          }
+        }
+      }
+    },
+    "/user/updateProfile" : {
+      "post" : {
+        "tags" : [ "User" ],
+        "summary" : "修改用户资料接口",
+        "description" : "修改用户资料接口",
+        "operationId" : "/user/updateProfile",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "body",
+          "in" : "body",
+          "description" : "修改用户资料JSON",
+          "schema" : {
+            "required" : [ "euid" ],
+            "properties" : {
+              "euid" : {
+                "type" : "string",
+                "description" : "用户ID"
+              },
+              "nick_name" : {
+                "type" : "string",
+                "description" : "用户昵称"
+              },
+              "gender" : {
+                "type" : "integer",
+                "format" : "int64",
+                "description" : "用户性别(0:保密 1:男 2:女)"
+              },
+              "birth_day" : {
+                "type" : "string",
+                "description" : "生日(格式必须为:yyyy-MM-dd)"
+              },
+              "remark" : {
+                "type" : "string",
+                "description" : "个人说明"
+              },
+              "stature" : {
+                "type" : "integer",
+                "format" : "int64",
+                "description" : "身高"
+              },
+              "weight" : {
+                "type" : "integer",
+                "format" : "int64",
+                "description" : "体重"
+              },
+              "shape" : {
+                "type" : "string",
+                "description" : "体型"
+              },
+              "blood" : {
+                "type" : "string",
+                "description" : "血型"
+              },
+              "degree" : {
+                "type" : "string",
+                "description" : "最高学历"
+              },
+              "school" : {
+                "type" : "string",
+                "description" : "毕业学校"
+              },
+              "salary" : {
+                "type" : "string",
+                "description" : "目前月薪"
+              },
+              "interest" : {
+                "type" : "string",
+                "description" : "兴趣爱好"
+              },
+              "marriage" : {
+                "type" : "string",
+                "description" : "婚姻状况"
+              },
+              "profession" : {
+                "type" : "string",
+                "description" : "职业信息"
+              },
+              "company_name" : {
+                "type" : "string",
+                "description" : "公司名称"
+              },
+              "home_area" : {
+                "type" : "string",
+                "description" : "家乡"
+              },
+              "now_area" : {
+                "type" : "string",
+                "description" : "现居城市"
+              }
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "修改成功，返回成功信息",
+            "schema" : {
+              "$ref" : "#/definitions/UserState"
+            }
+          },
+          "default" : {
+            "description" : "error",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/user/updateAvatar" : {
+      "post" : {
+        "tags" : [ "User" ],
+        "summary" : "修改头像API",
+        "operationId" : "/user/updateAvatar",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "body",
+          "in" : "body",
+          "description" : "修改头像JSON",
+          "schema" : {
+            "required" : [ "euid", "avatar" ],
+            "properties" : {
+              "version" : {
+                "type" : "string",
+                "description" : "版本号"
+              },
+              "imei" : {
+                "type" : "string",
+                "description" : "唯一识别号"
+              },
+              "client" : {
+                "type" : "string",
+                "description" : "客户端类型"
+              },
+              "val" : {
+                "type" : "string",
+                "description" : "加密串"
+              },
+              "ts" : {
+                "type" : "integer",
+                "format" : "int64",
+                "description" : "时间戳(加密串要用到,供服务端验证，简单防刷)"
+              },
+              "euid" : {
+                "type" : "string",
+                "description" : "创建人ID"
+              },
+              "avatar" : {
+                "type" : "string",
+                "description" : "上传的头像图片地址"
+              }
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "修改成功，返回成功信息",
+            "schema" : {
+              "properties" : {
+                "state" : {
+                  "$ref" : "#/definitions/AvatarState"
+                }
+              }
+            }
+          },
+          "default" : {
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            },
+            "description" : "返回错误"
+          }
+        }
+      }
+    },
+    "/user/updatePwd" : {
+      "post" : {
+        "tags" : [ "User" ],
+        "summary" : "修改密码接口",
+        "operationId" : "/user/updatePwd",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "body",
+          "in" : "body",
+          "description" : "修改密码JSON",
+          "schema" : {
+            "required" : [ "euid", "old_pwd", "new_pwd" ],
+            "properties" : {
+              "version" : {
+                "type" : "string",
+                "description" : "版本号"
+              },
+              "imei" : {
+                "type" : "string",
+                "description" : "唯一识别号"
+              },
+              "client" : {
+                "type" : "string",
+                "description" : "客户端类型"
+              },
+              "val" : {
+                "type" : "string",
+                "description" : "加密串"
+              },
+              "ts" : {
+                "type" : "integer",
+                "format" : "int64",
+                "description" : "时间戳(加密串要用到,供服务端验证，简单防刷)"
+              },
+              "euid" : {
+                "type" : "string",
+                "description" : "用户ID"
+              },
+              "phone" : {
+                "type" : "string",
+                "description" : "手机号"
+              },
+              "old_pwd" : {
+                "type" : "string",
+                "description" : "旧密码"
+              },
+              "new_pwd" : {
+                "type" : "string",
+                "description" : "新密码"
+              }
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "修改成功，返回成功信息",
+            "schema" : {
+              "$ref" : "#/definitions/State"
+            }
+          },
+          "default" : {
+            "description" : "error",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/file/upload" : {
+      "post" : {
+        "tags" : [ "FileUpload" ],
+        "summary" : "文件上传",
+        "operationId" : "/file/upload",
+        "consumes" : [ "multipart/form-data" ],
+        "parameters" : [ {
+          "in" : "formData",
+          "name" : "euid",
+          "type" : "string",
+          "required" : false,
+          "description" : "上传者的ID"
+        }, {
+          "in" : "formData",
+          "name" : "file",
+          "required" : true,
+          "type" : "file",
+          "description" : "上传的文件"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "成功，返回成功信息",
+            "schema" : {
+              "properties" : {
+                "state" : {
+                  "$ref" : "#/definitions/State"
+                },
+                "files" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/Photo"
+                  }
+                }
+              }
+            }
+          },
+          "default" : {
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            },
+            "description" : "返回错误"
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "State" : {
+      "type" : "object",
+      "required" : [ "code", "message" ],
+      "properties" : {
+        "code" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "message" : {
+          "type" : "string"
+        }
+      }
+    },
+    "Error" : {
+      "type" : "object",
+      "required" : [ "msg" ],
+      "properties" : {
+        "code" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "msg" : {
+          "type" : "string",
+          "description" : "返回结果"
+        }
+      }
+    },
+    "UserBase" : {
+      "type" : "object",
+      "description" : "登录成功返回的信息",
+      "required" : [ "euid", "phone", "nick_name" ],
+      "properties" : {
+        "euid" : {
+          "type" : "string",
+          "description" : "用户ID"
+        },
+        "phone" : {
+          "type" : "string",
+          "description" : "用户手机号"
+        },
+        "nick_name" : {
+          "type" : "string",
+          "description" : "用户昵称"
+        },
+        "avatar" : {
+          "type" : "string",
+          "description" : "用户头像"
+        },
+        "gender" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "性别"
+        },
+        "birth_day" : {
+          "type" : "string",
+          "description" : "生日(格式为:yyyy-MM-dd)"
+        },
+        "tags" : {
+          "type" : "string",
+          "description" : "标签"
+        },
+        "level" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "用户在应用内的等级"
+        },
+        "current_points" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "用户当前积分"
+        },
+        "current_coins" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "用户当前金币"
+        },
+        "friends_count" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "好友数量"
+        },
+        "register_at" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "注册日期"
+        },
+        "login_at" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "上一次登录日期"
+        },
+        "status" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "状态(0=正常 1=锁定)"
+        }
+      }
+    },
+    "UserInfo" : {
+      "type" : "object",
+      "description" : "返回的用户信息",
+      "required" : [ "euid", "nick_name" ],
+      "properties" : {
+        "euid" : {
+          "type" : "string",
+          "description" : "用户ID"
+        },
+        "nick_name" : {
+          "type" : "string",
+          "description" : "用户昵称"
+        },
+        "avatar" : {
+          "type" : "string",
+          "description" : "用户头像"
+        },
+        "gender" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "性别"
+        },
+        "birth_day" : {
+          "type" : "string",
+          "description" : "生日(格式为:yyyy-MM-dd)"
+        },
+        "tags" : {
+          "type" : "string",
+          "description" : "标签"
+        },
+        "stature" : {
+          "type" : "string",
+          "description" : "身高(cm)"
+        },
+        "weight" : {
+          "type" : "string",
+          "description" : "体重(kg)"
+        },
+        "shape" : {
+          "type" : "string",
+          "description" : "体型"
+        },
+        "blood" : {
+          "type" : "string",
+          "description" : "血型"
+        },
+        "degree" : {
+          "type" : "string",
+          "description" : "最高学历"
+        },
+        "school" : {
+          "type" : "string",
+          "description" : "毕业学校"
+        },
+        "salary" : {
+          "type" : "string",
+          "description" : "目前月薪"
+        },
+        "interest" : {
+          "type" : "string",
+          "description" : "兴趣爱好"
+        },
+        "marriage" : {
+          "type" : "string",
+          "description" : "婚姻状况"
+        },
+        "profession" : {
+          "type" : "string",
+          "description" : "职业信息"
+        },
+        "company_name" : {
+          "type" : "string",
+          "description" : "公司名称"
+        },
+        "now_area" : {
+          "type" : "string",
+          "description" : "现居城市"
+        },
+        "home_area" : {
+          "type" : "string",
+          "description" : "家乡"
+        },
+        "resume" : {
+          "type" : "string",
+          "description" : "个人简介"
+        },
+        "status" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "状态(0=正常 1=锁定)"
+        }
+      }
+    },
+    "Photo" : {
+      "type" : "object",
+      "description" : "返回的图片信息",
+      "required" : [ "photo_id" ],
+      "properties" : {
+        "photo_id" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "图片ID"
+        },
+        "origin" : {
+          "type" : "string",
+          "description" : "原图"
+        },
+        "large" : {
+          "type" : "string",
+          "description" : "大图"
+        },
+        "middle" : {
+          "type" : "string",
+          "description" : "中图"
+        },
+        "small" : {
+          "type" : "string",
+          "description" : "小图"
+        },
+        "round" : {
+          "type" : "string",
+          "description" : "圆图(头像)"
+        },
+        "type" : {
+          "type" : "string",
+          "description" : "文件类型，后缀"
+        }
+      }
+    },
+    "Account" : {
+      "type" : "object",
+      "description" : "返回的账户信息",
+      "properties" : {
+        "current_points" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "用户当前积分"
+        },
+        "current_coins" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "用户当前金币"
+        },
+        "current_rmb" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "用户当前人民币"
+        }
+      }
+    },
+    "LoginState" : {
+      "type" : "object",
+      "description" : "登录成功后返回的信息",
+      "required" : [ "state" ],
+      "properties" : {
+        "state" : {
+          "$ref" : "#/definitions/State"
+        },
+        "data" : {
+          "$ref" : "#/definitions/UserBase"
+        }
+      }
+    },
+    "RegisterState" : {
+      "type" : "object",
+      "description" : "注册成功后返回的信息",
+      "required" : [ "state" ],
+      "properties" : {
+        "state" : {
+          "$ref" : "#/definitions/State"
+        },
+        "data" : {
+          "$ref" : "#/definitions/UserBase"
+        }
+      }
+    },
+    "AvatarState" : {
+      "type" : "object",
+      "description" : "上传头像成功后的信息",
+      "required" : [ "state" ],
+      "properties" : {
+        "state" : {
+          "$ref" : "#/definitions/State"
+        },
+        "data" : {
+          "$ref" : "#/definitions/Photo"
+        }
+      }
+    },
+    "UserState" : {
+      "type" : "object",
+      "description" : "修改用户信息成功后的信息",
+      "required" : [ "state" ],
+      "properties" : {
+        "state" : {
+          "$ref" : "#/definitions/State"
+        },
+        "data" : {
+          "$ref" : "#/definitions/UserInfo"
+        }
+      }
+    },
+    "AccountState" : {
+      "type" : "object",
+      "description" : "获取用户账户信息成功后的信息",
+      "required" : [ "state" ],
+      "properties" : {
+        "state" : {
+          "$ref" : "#/definitions/State"
+        },
+        "data" : {
+          "$ref" : "#/definitions/Account"
+        }
+      }
+    }
+  },
+  "schemes" : [ "https", "http" ],
+  "basePath" : "/kukuasir/Login/1.0.0"
+}
