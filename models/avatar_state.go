@@ -18,7 +18,7 @@ import (
 type AvatarState struct {
 
 	// data
-	Data *Photo `json:"data,omitempty"`
+	Data *UserInfo `json:"data,omitempty"`
 
 	// state
 	// Required: true

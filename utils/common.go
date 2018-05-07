@@ -5,7 +5,9 @@ import "encoding/json"
 /** 所需的表名定义 */
 const (
 	T_USER = "btk_User"
-	TS_SMS = "btk_SMS"
+	T_PROFILE = "btk_Profile"
+	T_SMS = "btk_SMS"
+	T_IMAGE = "btk_Image"
 )
 
 /** 短信验证码失效时间 */

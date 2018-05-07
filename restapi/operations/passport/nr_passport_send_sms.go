@@ -88,7 +88,7 @@ func (o *NrPassportSendSms) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		record.Phone = *Params.Body.Phone
 		record.Type = Params.Body.Type
 		record.CreateAt = time.Now().Unix()
-		db.Table(utils.TS_SMS).Save(&record)
+		db.Table(utils.T_SMS).Save(&record)
 	}
 
 	var res models.State

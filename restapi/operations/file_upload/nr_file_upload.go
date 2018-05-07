@@ -7,9 +7,17 @@ package file_upload
 
 import (
 	"net/http"
-
-	middleware "github.com/go-openapi/runtime/middleware"
+	_"github.com/jinzhu/gorm"
+	_"github.com/jinzhu/gorm/dialects/mysql"
+	"github.com/go-openapi/runtime/middleware"
 	"Login/models"
+	"Login/utils"
+	"mime"
+	"fmt"
+	"os"
+	"path/filepath"
+	"io/ioutil"
+	"crypto/rand"
 )
 
 // NrFileUploadHandlerFunc turns a function with the right signature into a file upload handler
@@ -40,6 +48,9 @@ type NrFileUpload struct {
 	Handler NrFileUploadHandler
 }
 
+const maxUploadSize = 2 * 1024 * 2014 // 2 MB
+const uploadPath = "./images/avatar"
+
 func (o *NrFileUpload) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
@@ -55,7 +66,90 @@ func (o *NrFileUpload) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	//res := o.Handler.Handle(Params) // actually handle the request
 
 	var res models.FileUploadOKBody
+	var state models.State
+
+	// 验证文件大小
+	r.Body = http.MaxBytesReader(rw, r.Body, maxUploadSize)
+	if err := r.ParseMultipartForm(maxUploadSize); err != nil {
+		state.UnmarshalBinary([]byte(utils.Response200(http.StatusBadRequest, "文件大小超出最大限制")))
+		res.State = &state
+		o.Context.Respond(rw, r, route.Produces, route, res)
+		return
+	}
+
+	// 检查并解析表单参数类型和上传的文件
+	fileType := r.PostFormValue("type")
+	file, _, err := r.FormFile("file")
+	if err != nil {
+		state.UnmarshalBinary([]byte(utils.Response200(http.StatusBadRequest, "无效的文件")))
+		res.State = &state
+		o.Context.Respond(rw, r, route.Produces, route, res)
+		return
+	}
+	defer file.Close()
+
+	fileBytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		state.UnmarshalBinary([]byte(utils.Response200(http.StatusBadRequest, "无效的文件")))
+		res.State = &state
+		o.Context.Respond(rw, r, route.Produces, route, res)
+		return
+	}
+
+	// 检查所提供的文件类型
+	filetype := http.DetectContentType(fileBytes)
+	if filetype != "image/jpeg" && filetype != "image/jpg" && filetype != "image/gif" && filetype != "image/png" {
+		state.UnmarshalBinary([]byte(utils.Response200(http.StatusBadRequest, "无效的文件类型")))
+		res.State = &state
+		o.Context.Respond(rw, r, route.Produces, route, res)
+		return
+	}
+
+	// 创建一个随机文件名
+	fileName := randToken(12)
+	fileEndings, err := mime.ExtensionsByType(filetype)
+	if err != nil {
+		state.UnmarshalBinary([]byte(utils.Response200(http.StatusInternalServerError, "不能读取文件类型")))
+		res.State = &state
+		o.Context.Respond(rw, r, route.Produces, route, res)
+		return
+	}
+	newPath := filepath.Join(uploadPath, fileName+fileEndings[0])
+	fmt.Printf("FileType: %s, File: %s\n", fileType, newPath)
+
+	// 写文件
+	newFile, err := os.Create(newPath)
+	if err != nil {
+		state.UnmarshalBinary([]byte(utils.Response200(http.StatusInternalServerError, err.Error())))
+		res.State = &state
+		o.Context.Respond(rw, r, route.Produces, route, res)
+		return
+	}
+	defer newFile.Close()
+	if _, err := newFile.Write(fileBytes); err != nil {
+		state.UnmarshalBinary([]byte(utils.Response200(http.StatusInternalServerError, "无法写入文件")))
+		res.State = &state
+		o.Context.Respond(rw, r, route.Produces, route, res)
+		return
+	}
+
+	// 上传成功后，写入到数据库中
+	db, err := utils.OpenConnection()
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	defer db.Close()
+
+	state.UnmarshalBinary([]byte(utils.Response200(http.StatusOK, "上传成功")))
+	res.State = &state
+	res.Data = "http://" + r.Host + "/" + newPath
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
+}
+
+func randToken(len int) string {
+	b := make([]byte, len)
+	rand.Read(b)
+	return fmt.Sprintf("%x", b)
 }

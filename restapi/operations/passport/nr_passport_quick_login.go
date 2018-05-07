@@ -75,7 +75,7 @@ func (o *NrPassportQuickLogin) ServeHTTP(rw http.ResponseWriter, r *http.Request
 
 	// 先判断验证码是否正确
 	var sms SMSRecord
-	db.Table(utils.TS_SMS).Where("phone=?", *Params.Body.Phone).Where("code=?", *Params.Body.ValidCode).Where("type=1").Order("create_at DESC").First(&sms)
+	db.Table(utils.T_SMS).Where("phone=?", *Params.Body.Phone).Where("code=?", *Params.Body.ValidCode).Where("type=1").Order("create_at DESC").First(&sms)
 	if len(sms.Code) == 0 {
 		code = 401
 		message = "验证码不正确"

@@ -18,8 +18,7 @@ import (
 type UserUpdateAvatarParamsBody struct {
 
 	// 上传的头像图片地址
-	// Required: true
-	Avatar *string `json:"avatar"`
+	Avatar string `json:"avatar,omitempty"`
 
 	// 客户端类型
 	Client string `json:"client,omitempty"`
@@ -45,11 +44,6 @@ type UserUpdateAvatarParamsBody struct {
 func (m *UserUpdateAvatarParamsBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateAvatar(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if err := m.validateEuid(formats); err != nil {
 		// prop
 		res = append(res, err)
@@ -58,15 +52,6 @@ func (m *UserUpdateAvatarParamsBody) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *UserUpdateAvatarParamsBody) validateAvatar(formats strfmt.Registry) error {
-
-	if err := validate.Required("avatar", "body", m.Avatar); err != nil {
-		return err
-	}
-
 	return nil
 }
 

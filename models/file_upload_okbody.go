@@ -16,8 +16,8 @@ import (
 // swagger:model fileUploadOKBody
 type FileUploadOKBody struct {
 
-	// files
-	Files FileUploadOKBodyFiles `json:"files"`
+	// 上传成功后返回的图片URL地址
+	Data string `json:"data,omitempty"`
 
 	// state
 	State *State `json:"state,omitempty"`

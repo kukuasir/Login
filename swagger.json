@@ -643,7 +643,7 @@
           "in" : "body",
           "description" : "修改头像JSON",
           "schema" : {
-            "required" : [ "euid", "avatar" ],
+            "required" : [ "euid" ],
             "properties" : {
               "version" : {
                 "type" : "string",
@@ -794,11 +794,9 @@
                 "state" : {
                   "$ref" : "#/definitions/State"
                 },
-                "files" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/Photo"
-                  }
+                "data" : {
+                  "type" : "string",
+                  "description" : "上传成功后返回的图片URL地址"
                 }
               }
             }
@@ -915,7 +913,7 @@
     "UserInfo" : {
       "type" : "object",
       "description" : "返回的用户信息",
-      "required" : [ "euid", "nick_name" ],
+      "required" : [ "euid" ],
       "properties" : {
         "euid" : {
           "type" : "string",
@@ -998,10 +996,10 @@
           "type" : "string",
           "description" : "个人简介"
         },
-        "status" : {
+        "update_at" : {
           "type" : "integer",
           "format" : "int64",
-          "description" : "状态(0=正常 1=锁定)"
+          "description" : "最后一次修改时间"
         }
       }
     },
@@ -1097,7 +1095,7 @@
           "$ref" : "#/definitions/State"
         },
         "data" : {
-          "$ref" : "#/definitions/Photo"
+          "$ref" : "#/definitions/UserInfo"
         }
       }
     },

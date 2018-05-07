@@ -49,8 +49,7 @@ type UserInfo struct {
 	Marriage string `json:"marriage,omitempty"`
 
 	// 用户昵称
-	// Required: true
-	NickName *string `json:"nick_name"`
+	NickName string `json:"nick_name,omitempty"`
 
 	// 现居城市
 	NowArea string `json:"now_area,omitempty"`
@@ -73,11 +72,11 @@ type UserInfo struct {
 	// 身高(cm)
 	Stature string `json:"stature,omitempty"`
 
-	// 状态(0=正常 1=锁定)
-	Status int64 `json:"status,omitempty"`
-
 	// 标签
 	Tags string `json:"tags,omitempty"`
+
+	// 最后一次修改时间
+	UpdateAt int64 `json:"update_at,omitempty"`
 
 	// 体重(kg)
 	Weight string `json:"weight,omitempty"`
@@ -92,11 +91,6 @@ func (m *UserInfo) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateNickName(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -106,15 +100,6 @@ func (m *UserInfo) Validate(formats strfmt.Registry) error {
 func (m *UserInfo) validateEuid(formats strfmt.Registry) error {
 
 	if err := validate.Required("euid", "body", m.Euid); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *UserInfo) validateNickName(formats strfmt.Registry) error {
-
-	if err := validate.Required("nick_name", "body", m.NickName); err != nil {
 		return err
 	}
 

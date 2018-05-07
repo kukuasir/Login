@@ -7,8 +7,14 @@ package user
 
 import (
 	"net/http"
-
-	middleware "github.com/go-openapi/runtime/middleware"
+	"net/url"
+	_"github.com/jinzhu/gorm"
+	_"github.com/jinzhu/gorm/dialects/mysql"
+	"github.com/go-openapi/runtime/middleware"
+	"Login/models"
+	"Login/utils"
+	"fmt"
+	"time"
 )
 
 // NrUserUpdateAvatarHandlerFunc turns a function with the right signature into a user update avatar handler
@@ -51,7 +57,41 @@ func (o *NrUserUpdateAvatar) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	res := o.Handler.Handle(Params) // actually handle the request
+	//res := o.Handler.Handle(Params) // actually handle the request
+
+	db, err := utils.OpenConnection()
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	defer db.Close()
+
+	var res models.AvatarState
+	var state models.State
+	var data models.UserInfo
+
+	db.Table(utils.T_USER).Where("euid=?", Params.Body.Euid).Where("status=0").Find(&data)
+
+	// 不存在的用户
+	if data.Euid == nil {
+		state.UnmarshalBinary([]byte(utils.Response200(402, "用户不存在")))
+		res.State = &state
+		o.Context.Respond(rw, r, route.Produces, route, res)
+		return
+	}
+
+	var path string
+	if len(Params.Body.Avatar) > 0 {
+		u, _ := url.Parse(Params.Body.Avatar)
+		path = u.Path
+	}
+	data.Avatar = Params.Body.Avatar
+	data.UpdateAt = time.Now().Unix()
+
+	db.Table(utils.T_USER).Where("euid=?", Params.Body.Euid).Update(map[string]interface{}{"avatar": path})
+
+	state.UnmarshalBinary([]byte(utils.Response200(200, "修改成功")))
+	res.State = &state
+	res.Data = &data
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
