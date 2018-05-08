@@ -20,7 +20,7 @@ func init() {
   "swagger": "2.0",
   "info": {
     "description": "通用授权模块",
-    "title": "Login(Api)",
+    "title": "Passport(Api)",
     "version": "1.0.0"
   },
   "host": "virtserver.swaggerhub.com",

@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	"Login/models"
+	"Passport/models"
 )
 
 // FileUploadOKCode is the HTTP code returned for type FileUploadOK

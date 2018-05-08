@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	"Login/models"
+	"Passport/models"
 )
 
 // PassportGetbackPwdOKCode is the HTTP code returned for type PassportGetbackPwdOK

@@ -11,10 +11,10 @@ import (
 	middleware "github.com/go-openapi/runtime/middleware"
 	graceful "github.com/tylerb/graceful"
 
-	"Login/restapi/operations"
-	"Login/restapi/operations/file_upload"
-	"Login/restapi/operations/passport"
-	"Login/restapi/operations/user"
+	"Passport/restapi/operations"
+	"Passport/restapi/operations/file_upload"
+	"Passport/restapi/operations/passport"
+	"Passport/restapi/operations/user"
 )
 
 // This file is safe to edit. Once it exists it will not be overwritten

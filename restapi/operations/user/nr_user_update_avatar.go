@@ -11,8 +11,8 @@ import (
 	_"github.com/jinzhu/gorm"
 	_"github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/go-openapi/runtime/middleware"
-	"Login/models"
-	"Login/utils"
+	"Passport/models"
+	"Passport/utils"
 	"fmt"
 	"time"
 )

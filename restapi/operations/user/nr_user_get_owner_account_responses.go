@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	"Login/models"
+	"Passport/models"
 )
 
 // UserGetOwnerAccountOKCode is the HTTP code returned for type UserGetOwnerAccountOK

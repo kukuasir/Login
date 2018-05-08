@@ -12,7 +12,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 
-	"Login/models"
+	"Passport/models"
 )
 
 // NewNrUserUpdatePwdParams creates a new NrUserUpdatePwdParams object

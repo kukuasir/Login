@@ -19,9 +19,9 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"Login/restapi/operations/file_upload"
-	"Login/restapi/operations/passport"
-	"Login/restapi/operations/user"
+	"Passport/restapi/operations/file_upload"
+	"Passport/restapi/operations/passport"
+	"Passport/restapi/operations/user"
 )
 
 // NewLoginAPI creates a new Login instance

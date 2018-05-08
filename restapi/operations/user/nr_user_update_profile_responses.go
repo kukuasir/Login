@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	"Login/models"
+	"Passport/models"
 )
 
 // UserUpdateProfileOKCode is the HTTP code returned for type UserUpdateProfileOK

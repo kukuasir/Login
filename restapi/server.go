@@ -20,7 +20,7 @@ import (
 	flags "github.com/jessevdk/go-flags"
 	graceful "github.com/tylerb/graceful"
 
-	"Login/restapi/operations"
+	"Passport/restapi/operations"
 )
 
 const (

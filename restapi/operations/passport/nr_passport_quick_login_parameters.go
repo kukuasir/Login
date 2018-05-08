@@ -12,7 +12,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 
-	"Login/models"
+	"Passport/models"
 )
 
 // NewNrPassportQuickLoginParams creates a new NrPassportQuickLoginParams object
