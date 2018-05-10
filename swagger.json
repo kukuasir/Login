@@ -64,9 +64,9 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "验证码发送成功",
+            "description" : "验证短信发送成功",
             "schema" : {
-              "$ref" : "#/definitions/State"
+              "$ref" : "#/definitions/SMSState"
             }
           },
           "default" : {
@@ -1057,6 +1057,20 @@
           "type" : "integer",
           "format" : "int64",
           "description" : "用户当前人民币"
+        }
+      }
+    },
+    "SMSState" : {
+      "type" : "object",
+      "description" : "发送短信成功后返回的信息",
+      "required" : [ "state" ],
+      "properties" : {
+        "state" : {
+          "$ref" : "#/definitions/State"
+        },
+        "data" : {
+          "type" : "string",
+          "description" : "附加信息"
         }
       }
     },

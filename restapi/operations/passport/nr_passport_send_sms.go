@@ -15,6 +15,7 @@ import (
 	"time"
 	"fmt"
 	"strconv"
+	"math/rand"
 )
 
 // NrPassportSendSmsHandlerFunc turns a function with the right signature into a passport send sms handler
@@ -68,6 +69,9 @@ func (o *NrPassportSendSms) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 
 	//res := o.Handler.Handle(Params) // actually handle the request
 
+	var res models.SMSState
+	var state models.State
+
 	db, err := utils.OpenConnection()
 	if err != nil {
 		fmt.Println(err.Error())
@@ -81,9 +85,8 @@ func (o *NrPassportSendSms) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	db.Raw(sql).Last(&record)
 	if len(record.Code) == 0 {
 		// 产生随机验证码
-		//random := rand.New(rand.NewSource(time.Now().UnixNano()))
-		//code := fmt.Sprintf("%06v", random.Int31n(1000000))
-		code := "123456"
+		random := rand.New(rand.NewSource(time.Now().UnixNano()))
+		code := fmt.Sprintf("%06v", random.Int31n(1000000))
 		record.Code = code
 		record.Phone = *Params.Body.Phone
 		record.Type = Params.Body.Type
@@ -91,8 +94,9 @@ func (o *NrPassportSendSms) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		db.Table(utils.T_SMS).Save(&record)
 	}
 
-	var res models.State
-	res.UnmarshalBinary([]byte(utils.Response200(200, "发送成功")))
+	state.UnmarshalBinary([]byte(utils.Response200(200, "发送成功")))
+	res.State = &state
+	res.Data = record.Code
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
