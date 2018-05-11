@@ -111,8 +111,8 @@ func (o *NrUserUpdateProfile) ServeHTTP(rw http.ResponseWriter, r *http.Request)
 	if len(Params.Body.Profession) > 0 {
 		data.Profession = Params.Body.Profession
 	}
-	if len(Params.Body.Remark) > 0 {
-		data.Resume = Params.Body.Remark
+	if len(Params.Body.Resume) > 0 {
+		data.Resume = Params.Body.Resume
 	}
 	if len(Params.Body.Salary) > 0 {
 		data.Salary = Params.Body.Salary
@@ -132,12 +132,12 @@ func (o *NrUserUpdateProfile) ServeHTTP(rw http.ResponseWriter, r *http.Request)
 
 	data.UpdateAt = time.Now().Unix()
 
-	db.Table(utils.T_USER).Where("euid=", *data.Euid).Save(&data)
+	db.Table(utils.T_USER).Save(&data)
 
 	state.UnmarshalBinary([]byte(utils.Response200(200, "修改成功")))
 	res.State = &state
 	res.Data = &data
-	
+
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }
