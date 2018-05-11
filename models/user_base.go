@@ -56,9 +56,6 @@ type UserBase struct {
 
 	// 状态(0=正常 1=锁定)
 	Status int64 `json:"status,omitempty"`
-
-	// 标签
-	Tags string `json:"tags,omitempty"`
 }
 
 // Validate validates this user base

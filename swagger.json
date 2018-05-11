@@ -865,10 +865,6 @@
           "type" : "string",
           "description" : "生日(格式为:yyyy-MM-dd)"
         },
-        "tags" : {
-          "type" : "string",
-          "description" : "标签"
-        },
         "level" : {
           "type" : "integer",
           "format" : "int64",
@@ -931,10 +927,6 @@
         "birth_day" : {
           "type" : "string",
           "description" : "生日(格式为:yyyy-MM-dd)"
-        },
-        "tags" : {
-          "type" : "string",
-          "description" : "标签"
         },
         "stature" : {
           "type" : "string",

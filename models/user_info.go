@@ -69,9 +69,6 @@ type UserInfo struct {
 	// 身高(cm)
 	Stature string `json:"stature,omitempty"`
 
-	// 标签
-	Tags string `json:"tags,omitempty"`
-
 	// 最后一次修改时间
 	UpdateAt int64 `json:"update_at,omitempty"`
 
