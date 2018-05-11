@@ -46,12 +46,10 @@ type UserBase struct {
 	LoginAt int64 `json:"login_at,omitempty"`
 
 	// 用户昵称
-	// Required: true
-	NickName *string `json:"nick_name"`
+	NickName string `json:"nick_name,omitempty"`
 
 	// 用户手机号
-	// Required: true
-	Phone *string `json:"phone"`
+	Phone string `json:"phone,omitempty"`
 
 	// 注册日期
 	RegisterAt int64 `json:"register_at,omitempty"`
@@ -72,16 +70,6 @@ func (m *UserBase) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateNickName(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validatePhone(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -91,24 +79,6 @@ func (m *UserBase) Validate(formats strfmt.Registry) error {
 func (m *UserBase) validateEuid(formats strfmt.Registry) error {
 
 	if err := validate.Required("euid", "body", m.Euid); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *UserBase) validateNickName(formats strfmt.Registry) error {
-
-	if err := validate.Required("nick_name", "body", m.NickName); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *UserBase) validatePhone(formats strfmt.Registry) error {
-
-	if err := validate.Required("phone", "body", m.Phone); err != nil {
 		return err
 	}
 

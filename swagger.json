@@ -842,7 +842,7 @@
     "UserBase" : {
       "type" : "object",
       "description" : "登录成功返回的信息",
-      "required" : [ "euid", "phone", "nick_name" ],
+      "required" : [ "euid" ],
       "properties" : {
         "euid" : {
           "type" : "string",
