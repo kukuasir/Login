@@ -39,6 +39,10 @@ type UserBase struct {
 	// 性别
 	Gender int64 `json:"gender,omitempty"`
 
+	// 用户ID
+	// Required: true
+	ID *int64 `json:"id"`
+
 	// 用户在应用内的等级
 	Level int64 `json:"level,omitempty"`
 
@@ -67,6 +71,11 @@ func (m *UserBase) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateID(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -76,6 +85,15 @@ func (m *UserBase) Validate(formats strfmt.Registry) error {
 func (m *UserBase) validateEuid(formats strfmt.Registry) error {
 
 	if err := validate.Required("euid", "body", m.Euid); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *UserBase) validateID(formats strfmt.Registry) error {
+
+	if err := validate.Required("id", "body", m.ID); err != nil {
 		return err
 	}
 

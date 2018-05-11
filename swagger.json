@@ -838,8 +838,13 @@
     "UserBase" : {
       "type" : "object",
       "description" : "登录成功返回的信息",
-      "required" : [ "euid" ],
+      "required" : [ "id", "euid" ],
       "properties" : {
+        "id" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "用户ID"
+        },
         "euid" : {
           "type" : "string",
           "description" : "用户ID"
@@ -905,8 +910,13 @@
     "UserInfo" : {
       "type" : "object",
       "description" : "返回的用户信息",
-      "required" : [ "euid" ],
+      "required" : [ "id", "euid" ],
       "properties" : {
+        "id" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "用户ID"
+        },
         "euid" : {
           "type" : "string",
           "description" : "用户ID"
