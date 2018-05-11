@@ -84,10 +84,10 @@ func (o *NrUserUpdateAvatar) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 		u, _ := url.Parse(Params.Body.Avatar)
 		path = u.Path
 	}
-	data.Avatar = Params.Body.Avatar
+	data.Avatar = path
 	data.UpdateAt = time.Now().Unix()
 
-	db.Table(utils.T_USER).Where("euid=?", Params.Body.Euid).Update(map[string]interface{}{"avatar": path})
+	db.Table(utils.T_USER).Save(&data)
 
 	state.UnmarshalBinary([]byte(utils.Response200(200, "修改成功")))
 	res.State = &state
