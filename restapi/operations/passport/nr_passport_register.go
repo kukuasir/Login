@@ -93,7 +93,7 @@ func (o *NrPassportRegister) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 				// 检查用户昵称是否被占用
 				var tmp models.UserBase
 				db.Table(utils.T_USER).Where("nick_name=?", Params.Body.NickName).Find(&tmp)
-				if tmp.NickName == nil {
+				if len(tmpNickName) == 0 {
 
 					// 如果没有NickName，默认使用手机号作为昵称
 					nick_name := Params.Body.NickName
