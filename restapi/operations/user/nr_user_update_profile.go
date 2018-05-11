@@ -137,7 +137,7 @@ func (o *NrUserUpdateProfile) ServeHTTP(rw http.ResponseWriter, r *http.Request)
 	state.UnmarshalBinary([]byte(utils.Response200(200, "修改成功")))
 	res.State = &state
 	res.Data = &data
-
+	
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }
