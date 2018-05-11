@@ -87,9 +87,6 @@ func (o *NrUserUpdateProfile) ServeHTTP(rw http.ResponseWriter, r *http.Request)
 	if len(Params.Body.Blood) > 0 {
 		data.Blood = Params.Body.Blood
 	}
-	if len(Params.Body.CompanyName) > 0 {
-		data.CompanyName = Params.Body.CompanyName
-	}
 	if len(Params.Body.Degree) > 0 {
 		data.Degree = Params.Body.Degree
 	}
@@ -135,12 +132,12 @@ func (o *NrUserUpdateProfile) ServeHTTP(rw http.ResponseWriter, r *http.Request)
 
 	data.UpdateAt = time.Now().Unix()
 
-	db.Table(utils.T_PROFILE).Save(&data)
+	db.Table(utils.T_USER).Where("euid=", *data.Euid).Save(&data)
 
 	state.UnmarshalBinary([]byte(utils.Response200(200, "修改成功")))
 	res.State = &state
 	res.Data = &data
-
+	
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }
