@@ -5,13 +5,14 @@ import "encoding/json"
 /** 所需的表名定义 */
 const (
 	T_USER = "btk_User"
-	T_PROFILE = "btk_Profile"
 	T_SMS = "btk_SMS"
-	T_IMAGE = "btk_Image"
 )
 
 /** 短信验证码失效时间 */
 const T_EXPIRED_SECONDS = 300
+
+/** 定义图片域名 */
+const T_IMAGE_DOMAIN = "http://inj-zone-img.bitekun.xin/"
 
 /** 定义返回成功后的方法 */
 type Response struct {

@@ -19,5 +19,11 @@ func GenEuidBy(uname string) string {
 }
 
 func GenNickNameBy(phone string) string {
-	return phone[0:4] + "****" + phone[7:11]
+	if len(phone) == 11 {
+		return phone[0:4] + "****" + phone[7:11]
+	} else if len(phone) > 0 {
+		return phone
+	} else {
+		return ""
+	}
 }
