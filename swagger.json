@@ -554,7 +554,7 @@
                 "type" : "string",
                 "description" : "生日(格式必须为:yyyy-MM-dd)"
               },
-              "remark" : {
+              "resume" : {
                 "type" : "string",
                 "description" : "个人说明"
               },
@@ -599,10 +599,6 @@
               "profession" : {
                 "type" : "string",
                 "description" : "职业信息"
-              },
-              "company_name" : {
-                "type" : "string",
-                "description" : "公司名称"
               },
               "home_area" : {
                 "type" : "string",
@@ -979,10 +975,6 @@
         "profession" : {
           "type" : "string",
           "description" : "职业信息"
-        },
-        "company_name" : {
-          "type" : "string",
-          "description" : "公司名称"
         },
         "now_area" : {
           "type" : "string",

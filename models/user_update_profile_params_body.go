@@ -23,9 +23,6 @@ type UserUpdateProfileParamsBody struct {
 	// 血型
 	Blood string `json:"blood,omitempty"`
 
-	// 公司名称
-	CompanyName string `json:"company_name,omitempty"`
-
 	// 最高学历
 	Degree string `json:"degree,omitempty"`
 
@@ -55,7 +52,7 @@ type UserUpdateProfileParamsBody struct {
 	Profession string `json:"profession,omitempty"`
 
 	// 个人说明
-	Remark string `json:"remark,omitempty"`
+	Resume string `json:"resume,omitempty"`
 
 	// 目前月薪
 	Salary string `json:"salary,omitempty"`

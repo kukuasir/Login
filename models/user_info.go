@@ -26,9 +26,6 @@ type UserInfo struct {
 	// 血型
 	Blood string `json:"blood,omitempty"`
 
-	// 公司名称
-	CompanyName string `json:"company_name,omitempty"`
-
 	// 最高学历
 	Degree string `json:"degree,omitempty"`
 
