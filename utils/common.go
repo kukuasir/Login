@@ -11,8 +11,8 @@ const (
 /** 短信验证码失效时间 */
 const T_EXPIRED_SECONDS = 300
 
-/** 定义图片域名 */
-const T_IMAGE_DOMAIN = "http://inj-zone-img.bitekun.xin/"
+/** 定义头像图片域名 */
+const T_IMAGE_DOMAIN = "http://inj-zone-img.bitekun.xin/resource/avatar/"
 
 /** 定义返回成功后的方法 */
 type Response struct {
