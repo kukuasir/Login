@@ -7,8 +7,12 @@ package passport
 
 import (
 	"net/http"
-
-	middleware "github.com/go-openapi/runtime/middleware"
+	_"github.com/jinzhu/gorm/dialects/mysql"
+	"github.com/go-openapi/runtime/middleware"
+	"Passport/models"
+	"Passport/utils"
+	"fmt"
+	"time"
 )
 
 // NrPassportGetbackPwdHandlerFunc turns a function with the right signature into a passport getback pwd handler
@@ -53,7 +57,50 @@ func (o *NrPassportGetbackPwd) ServeHTTP(rw http.ResponseWriter, r *http.Request
 		return
 	}
 
-	res := o.Handler.Handle(Params) // actually handle the request
+	//res := o.Handler.Handle(Params) // actually handle the request
+
+	db, err := utils.OpenConnection()
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	defer db.Close()
+
+	var state models.State
+	var user models.UserBase
+
+	// 定义错误信息
+	var code int64
+	var message string
+
+	// 先判断验证码是否正确
+	var sms SMSRecord
+	db.Table(utils.T_SMS).Where("phone=?", *Params.Body.Phone).Where("code=?", *Params.Body.ValidCode).Where("type=3").Order("create_at DESC").First(&sms)
+	if len(sms.Code) == 0 {
+		code = 401
+		message = "验证码不正确"
+	} else {
+		if time.Now().Unix() - utils.T_EXPIRED_SECONDS > sms.CreateAt {
+			code = 402
+			message = "验证码已失效"
+		} else {
+
+			QueryUser(db, *Params.Body.Phone, &user)
+
+			// 用户ID不存在
+			if user.Euid == nil {
+				code = 403
+				message = "手机号不存在"
+			} else {
+				sql := "UPDATE btk_User SET password = ? WHERE euid = ? AND status = 0"
+				db.Exec(sql, utils.MD5Encrypt(*Params.Body.Password), *user.Euid)
+				code = 200
+				message = "修改成功"
+			}
+		}
+	}
+
+	state.UnmarshalBinary([]byte(utils.Response200(code, message)))
+	res.State = &state
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 

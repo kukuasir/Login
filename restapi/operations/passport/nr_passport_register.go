@@ -88,7 +88,7 @@ func (o *NrPassportRegister) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 
 			QueryUser(db, *Params.Body.Phone, &user)
 
-			// 用户手机号不存在
+			// 用户ID不存在
 			if user.Euid == nil {
 				// 检查用户昵称是否被占用
 				var tmp models.UserBase

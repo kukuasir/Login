@@ -51,7 +51,21 @@ func (o *NrUserUpdatePwd) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := o.Handler.Handle(Params) // actually handle the request
+	//res := o.Handler.Handle(Params) // actually handle the request
+
+	db, err := utils.OpenConnection()
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	defer db.Close()
+
+	var state models.State
+
+	sql := "UPDATE btk_User SET password = ? WHERE euid = ? AND status = 0"
+	db.Exec(sql, utils.MD5Encrypt(*Params.Body.Password), *Params.Body.Euid)
+
+	state.UnmarshalBinary([]byte(utils.Response200(200, "修改成功")))
+	res.State = &state
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
