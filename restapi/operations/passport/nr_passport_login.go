@@ -79,6 +79,10 @@ func (o *NrPassportLogin) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	} else {
 		code = 200
 		message = "登录成功"
+		// 头像路径加上域名
+		if len(user.Avatar) > 0 {
+			user.Avatar = utils.T_IMAGE_DOMAIN + user.Avatar
+		}
 		res.Data = &user
 	}
 

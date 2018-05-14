@@ -143,7 +143,7 @@ func (o *NrFileUpload) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 
 	state.UnmarshalBinary([]byte(utils.Response200(http.StatusOK, "上传成功")))
 	res.State = &state
-	res.Data = utils.T_IMAGE_DOMAIN + newPath
+	res.Data = utils.T_IMAGE_DOMAIN + fileName + fileEndings[0]
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 

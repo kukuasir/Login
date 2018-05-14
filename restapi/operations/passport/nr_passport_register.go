@@ -105,6 +105,10 @@ func (o *NrPassportRegister) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 					db.Exec(sql, utils.GenEuidBy(*Params.Body.Phone), nick_name, Params.Body.BirthDay, Params.Body.Gender, Params.Body.Phone, utils.MD5Encrypt(*Params.Body.Password), Params.Body.InviteCode, time.Now().Unix())
 					// 注册成功后，再去查一下
 					QueryUser(db, *Params.Body.Phone, &user)
+					// 头像路径加上域名
+					if len(user.Avatar) > 0 {
+						user.Avatar = utils.T_IMAGE_DOMAIN + user.Avatar
+					}
 					res.Data = &user
 					code = 200
 					message = "注册成功"

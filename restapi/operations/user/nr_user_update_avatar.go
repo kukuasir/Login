@@ -15,6 +15,7 @@ import (
 	"Passport/utils"
 	"fmt"
 	"time"
+	"path"
 )
 
 // NrUserUpdateAvatarHandlerFunc turns a function with the right signature into a user update avatar handler
@@ -79,12 +80,12 @@ func (o *NrUserUpdateAvatar) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	var path string
+	var filename string
 	if len(Params.Body.Avatar) > 0 {
 		u, _ := url.Parse(Params.Body.Avatar)
-		path = u.Path
+		filename = path.Base(u.Path)
 	}
-	data.Avatar = path
+	data.Avatar = filename
 	data.UpdateAt = time.Now().Unix()
 
 	db.Table(utils.T_USER).Save(&data)
