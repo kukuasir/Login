@@ -67,7 +67,7 @@ func (o *NrUserGetOwnerAccount) ServeHTTP(rw http.ResponseWriter, r *http.Reques
 	var state models.State
 	var user models.Account
 
-	sql := "SELECT current_coins, current_points, current_rmb FROM btk_User WHERE euid = ? AND status = 0"
+	sql := "SELECT euid, current_coins, current_points, current_rmb FROM btk_User WHERE euid = ? AND status = 0"
 	db.Raw(sql, Params.Euid).Find(&user)
 	res.Data = &user
 

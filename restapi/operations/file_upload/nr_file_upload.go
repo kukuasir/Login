@@ -49,8 +49,8 @@ type NrFileUpload struct {
 }
 
 const maxUploadSize = 2 * 1024 * 2014 // 2 MB
-//const uploadPath = "/root/go/src/resource/image/avatar"
-const uploadPath = "./image/avatar"
+const uploadPath = "/root/go/src/resource/image/avatar"
+//const uploadPath = "./image/avatar"
 
 func (o *NrFileUpload) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
