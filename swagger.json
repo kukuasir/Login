@@ -705,7 +705,7 @@
           "in" : "body",
           "description" : "修改密码JSON",
           "schema" : {
-            "required" : [ "euid", "old_pwd", "new_pwd" ],
+            "required" : [ "euid", "phone", "old_pwd", "new_pwd" ],
             "properties" : {
               "version" : {
                 "type" : "string",

@@ -131,17 +131,16 @@ func (o *NrUserUpdateProfile) ServeHTTP(rw http.ResponseWriter, r *http.Request)
 	}
 
 	data.UpdateAt = time.Now().Unix()
-
-	// 头像路径加上域名
-	if len(data.Avatar) > 0 {
-		data.Avatar = utils.T_IMAGE_DOMAIN + data.Avatar
-	}
 	db.Table(utils.T_USER).Save(&data)
 
 	state.UnmarshalBinary([]byte(utils.Response200(200, "修改成功")))
 	res.State = &state
 
 	data.ID = nil
+	// 头像路径加上域名
+	if len(data.Avatar) > 0 {
+		data.Avatar = utils.T_IMAGE_DOMAIN + data.Avatar
+	}
 	res.Data = &data
 
 	o.Context.Respond(rw, r, route.Produces, route, res)

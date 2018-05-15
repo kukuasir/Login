@@ -36,7 +36,8 @@ type UserUpdatePwdParamsBody struct {
 	OldPwd *string `json:"old_pwd"`
 
 	// 手机号
-	Phone string `json:"phone,omitempty"`
+	// Required: true
+	Phone *string `json:"phone"`
 
 	// 时间戳(加密串要用到,供服务端验证，简单防刷)
 	Ts int64 `json:"ts,omitempty"`
@@ -63,6 +64,11 @@ func (m *UserUpdatePwdParamsBody) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateOldPwd(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validatePhone(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -94,6 +100,15 @@ func (m *UserUpdatePwdParamsBody) validateNewPwd(formats strfmt.Registry) error 
 func (m *UserUpdatePwdParamsBody) validateOldPwd(formats strfmt.Registry) error {
 
 	if err := validate.Required("old_pwd", "body", m.OldPwd); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *UserUpdatePwdParamsBody) validatePhone(formats strfmt.Registry) error {
+
+	if err := validate.Required("phone", "body", m.Phone); err != nil {
 		return err
 	}
 
