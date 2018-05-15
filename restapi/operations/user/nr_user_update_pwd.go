@@ -7,8 +7,11 @@ package user
 
 import (
 	"net/http"
-
-	middleware "github.com/go-openapi/runtime/middleware"
+	_"github.com/jinzhu/gorm/dialects/mysql"
+	"github.com/go-openapi/runtime/middleware"
+	"Passport/models"
+	"Passport/utils"
+	"fmt"
 )
 
 // NrUserUpdatePwdHandlerFunc turns a function with the right signature into a user update pwd handler
@@ -60,6 +63,9 @@ func (o *NrUserUpdatePwd) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	var state models.State
+
+	// 先校验手机号与旧密码是否正确
+	db.Table(utils.T_USER).Where("phone=", Params.Body.Phone).Where("password=", Params.Body.OldPwd)
 
 	sql := "UPDATE btk_User SET password = ? WHERE euid = ? AND status = 0"
 	db.Exec(sql, utils.MD5Encrypt(*Params.Body.Password), *Params.Body.Euid)
