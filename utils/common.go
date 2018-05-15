@@ -1,6 +1,10 @@
 package utils
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"crypto/rand"
+	"fmt"
+)
 
 /** 所需的表名定义 */
 const (
@@ -25,4 +29,10 @@ func Response200(code int64, msg string) string {
 	response.Message = msg
 	out, _ := json.Marshal(response)
 	return string(out)
+}
+
+func RandToken(len int) string {
+	b := make([]byte, len)
+	rand.Read(b)
+	return fmt.Sprintf("%x", b)
 }

@@ -17,7 +17,6 @@ import (
 	"os"
 	"path/filepath"
 	"io/ioutil"
-	"crypto/rand"
 )
 
 // NrFileUploadHandlerFunc turns a function with the right signature into a file upload handler
@@ -107,7 +106,7 @@ func (o *NrFileUpload) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	// 创建一个随机文件名
-	fileName := randToken(12)
+	fileName := utils.RandToken(12)
 	fileEndings, err := mime.ExtensionsByType(filetype)
 	if err != nil {
 		state.UnmarshalBinary([]byte(utils.Response200(http.StatusInternalServerError, "不能读取文件类型")))
@@ -147,10 +146,4 @@ func (o *NrFileUpload) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
-}
-
-func randToken(len int) string {
-	b := make([]byte, len)
-	rand.Read(b)
-	return fmt.Sprintf("%x", b)
 }

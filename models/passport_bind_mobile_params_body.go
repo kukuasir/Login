@@ -20,6 +20,10 @@ type PassportBindMobileParamsBody struct {
 	// 客户端类型
 	Client string `json:"client,omitempty"`
 
+	// 用户ID
+	// Required: true
+	Euid *string `json:"euid"`
+
 	// 唯一识别号
 	Imei string `json:"imei,omitempty"`
 
@@ -45,6 +49,11 @@ type PassportBindMobileParamsBody struct {
 func (m *PassportBindMobileParamsBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateEuid(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if err := m.validatePhone(formats); err != nil {
 		// prop
 		res = append(res, err)
@@ -58,6 +67,15 @@ func (m *PassportBindMobileParamsBody) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *PassportBindMobileParamsBody) validateEuid(formats strfmt.Registry) error {
+
+	if err := validate.Required("euid", "body", m.Euid); err != nil {
+		return err
+	}
+
 	return nil
 }
 

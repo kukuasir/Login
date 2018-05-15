@@ -62,15 +62,27 @@ func (o *NrUserUpdatePwd) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
+	var res models.RespState
 	var state models.State
+	var user models.UserBase
+
+	// 定义错误信息
+	var code int64
+	var message string
 
 	// 先校验手机号与旧密码是否正确
-	db.Table(utils.T_USER).Where("phone=", Params.Body.Phone).Where("password=", Params.Body.OldPwd)
+	db.Table(utils.T_USER).Where("phone=?", *Params.Body.Phone).Where("password=?", utils.MD5Encrypt(*Params.Body.OldPwd)).First(&user)
+	if user.Euid == nil {
+		code = 403
+		message = "手机号不存在或密码错误"
+	} else {
+		sql := "UPDATE btk_User SET password = ? WHERE phone = ? AND status = 0"
+		db.Exec(sql, utils.MD5Encrypt(*Params.Body.NewPwd), *Params.Body.Phone)
+		code = 200
+		message = "修改成功"
+	}
 
-	sql := "UPDATE btk_User SET password = ? WHERE euid = ? AND status = 0"
-	db.Exec(sql, utils.MD5Encrypt(*Params.Body.Password), *Params.Body.Euid)
-
-	state.UnmarshalBinary([]byte(utils.Response200(200, "修改成功")))
+	state.UnmarshalBinary([]byte(utils.Response200(code, message)))
 	res.State = &state
 
 	o.Context.Respond(rw, r, route.Produces, route, res)

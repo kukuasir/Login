@@ -21,8 +21,7 @@ type UserUpdatePwdParamsBody struct {
 	Client string `json:"client,omitempty"`
 
 	// 用户ID
-	// Required: true
-	Euid *string `json:"euid"`
+	Euid string `json:"euid,omitempty"`
 
 	// 唯一识别号
 	Imei string `json:"imei,omitempty"`
@@ -53,11 +52,6 @@ type UserUpdatePwdParamsBody struct {
 func (m *UserUpdatePwdParamsBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateEuid(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if err := m.validateNewPwd(formats); err != nil {
 		// prop
 		res = append(res, err)
@@ -76,15 +70,6 @@ func (m *UserUpdatePwdParamsBody) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *UserUpdatePwdParamsBody) validateEuid(formats strfmt.Registry) error {
-
-	if err := validate.Required("euid", "body", m.Euid); err != nil {
-		return err
-	}
-
 	return nil
 }
 

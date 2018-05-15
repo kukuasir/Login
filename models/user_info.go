@@ -29,7 +29,7 @@ type UserInfo struct {
 	// 最高学历
 	Degree string `json:"degree,omitempty"`
 
-	// 用户ID
+	// 用户ID (加密串)
 	// Required: true
 	Euid *string `json:"euid"`
 
@@ -72,6 +72,9 @@ type UserInfo struct {
 
 	// 身高(cm)
 	Stature string `json:"stature,omitempty"`
+
+	// 用户状态
+	Status int64 `json:"status,omitempty"`
 
 	// 最后一次修改时间
 	UpdateAt int64 `json:"update_at,omitempty"`

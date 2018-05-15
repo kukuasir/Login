@@ -33,15 +33,12 @@ type PassportLoginByThirdPartyParamsBody struct {
 	// Required: true
 	OpenID *string `json:"open_id"`
 
-	// 第三方登录平台，当type=3时，需要传入platform来判断从哪个平台登入
-	Platform string `json:"platform,omitempty"`
+	// 第三方登录方式 1=微信,2=QQ,3=微博
+	// Required: true
+	Platform *int64 `json:"platform"`
 
 	// 时间戳(加密串要用到,供服务端验证，简单防刷)
 	Ts int64 `json:"ts,omitempty"`
-
-	// 第三方登录方式 0=微信,1=QQ,2=微博,3=其他
-	// Required: true
-	Type *int64 `json:"type"`
 
 	// 加密串
 	Val string `json:"val,omitempty"`
@@ -59,7 +56,7 @@ func (m *PassportLoginByThirdPartyParamsBody) Validate(formats strfmt.Registry) 
 		res = append(res, err)
 	}
 
-	if err := m.validateType(formats); err != nil {
+	if err := m.validatePlatform(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -79,9 +76,9 @@ func (m *PassportLoginByThirdPartyParamsBody) validateOpenID(formats strfmt.Regi
 	return nil
 }
 
-func (m *PassportLoginByThirdPartyParamsBody) validateType(formats strfmt.Registry) error {
+func (m *PassportLoginByThirdPartyParamsBody) validatePlatform(formats strfmt.Registry) error {
 
-	if err := validate.Required("type", "body", m.Type); err != nil {
+	if err := validate.Required("platform", "body", m.Platform); err != nil {
 		return err
 	}
 

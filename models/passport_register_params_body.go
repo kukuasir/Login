@@ -35,7 +35,7 @@ type PassportRegisterParamsBody struct {
 	// 用户昵称，最大11个字符
 	NickName string `json:"nick_name,omitempty"`
 
-	// 注册密码
+	// 登录密码
 	// Required: true
 	Password *string `json:"password"`
 

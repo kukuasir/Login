@@ -65,7 +65,9 @@ func (o *NrPassportGetbackPwd) ServeHTTP(rw http.ResponseWriter, r *http.Request
 	}
 	defer db.Close()
 
+	var res models.RespState
 	var state models.State
+
 	var user models.UserBase
 
 	// 定义错误信息
@@ -84,7 +86,7 @@ func (o *NrPassportGetbackPwd) ServeHTTP(rw http.ResponseWriter, r *http.Request
 			message = "验证码已失效"
 		} else {
 
-			QueryUser(db, *Params.Body.Phone, &user)
+			db.Table(utils.T_USER).Where("phone=?", *Params.Body.Phone).Find(&user)
 
 			// 用户ID不存在
 			if user.Euid == nil {

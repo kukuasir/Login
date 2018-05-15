@@ -13,8 +13,8 @@ func MD5Encrypt(text string) string {
 	return hex.EncodeToString(hashstr.Sum(nil))
 }
 
-func GenEuidBy(uname string) string {
-	str := "BTK_" + uname + strconv.FormatInt(time.Now().Unix(), 10)
+func RandomEUID() string {
+	str := "BTK_" + RandToken(8) + strconv.FormatInt(time.Now().Unix(), 10)
 	return MD5Encrypt(str)
 }
 

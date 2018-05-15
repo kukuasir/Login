@@ -29,7 +29,7 @@ type UserBase struct {
 	// 用户当前积分
 	CurrentPoints int64 `json:"current_points,omitempty"`
 
-	// 用户ID
+	// 用户ID (加密串)
 	// Required: true
 	Euid *string `json:"euid"`
 
@@ -52,13 +52,19 @@ type UserBase struct {
 	// 用户昵称
 	NickName string `json:"nick_name,omitempty"`
 
+	// 现居城市
+	NowArea string `json:"now_area,omitempty"`
+
+	// 密码
+	Password string `json:"password,omitempty"`
+
 	// 用户手机号
 	Phone string `json:"phone,omitempty"`
 
 	// 注册日期
 	RegisterAt int64 `json:"register_at,omitempty"`
 
-	// 状态(0=正常 1=锁定)
+	// 用户状态
 	Status int64 `json:"status,omitempty"`
 }
 

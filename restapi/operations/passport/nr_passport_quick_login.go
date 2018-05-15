@@ -92,7 +92,7 @@ func (o *NrPassportQuickLogin) ServeHTTP(rw http.ResponseWriter, r *http.Request
 				code = 200
 				message = "登录成功"
 
-				euid_str := utils.GenEuidBy(*Params.Body.Phone)
+				euid_str := utils.RandomEUID()
 
 				// 第一次快捷登录，需要把信息写入到表中
 				user.Euid = &euid_str

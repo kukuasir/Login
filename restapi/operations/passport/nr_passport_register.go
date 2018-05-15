@@ -102,7 +102,7 @@ func (o *NrPassportRegister) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 						fmt.Println("nick_name = ", nick_name)
 					}
 					sql := "INSERT INTO btk_User(euid,nick_name,birth_day,gender,phone,password,invite_code,register_at) VALUES(?,?,?,?,?,?,?,?)"
-					db.Exec(sql, utils.GenEuidBy(*Params.Body.Phone), nick_name, Params.Body.BirthDay, Params.Body.Gender, Params.Body.Phone, utils.MD5Encrypt(*Params.Body.Password), Params.Body.InviteCode, time.Now().Unix())
+					db.Exec(sql, utils.RandomEUID(), nick_name, Params.Body.BirthDay, Params.Body.Gender, Params.Body.Phone, utils.MD5Encrypt(*Params.Body.Password), Params.Body.InviteCode, time.Now().Unix())
 					// 注册成功后，再去查一下
 					QueryUser(db, *Params.Body.Phone, &user)
 					// 头像路径加上域名

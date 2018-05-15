@@ -3,7 +3,7 @@
   "info" : {
     "description" : "通用授权模块",
     "version" : "1.0.0",
-    "title" : "Login(Api)"
+    "title" : "Passport(Api)"
   },
   "host" : "virtserver.swaggerhub.com",
   "tags" : [ {
@@ -64,7 +64,7 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "验证短信发送成功",
+            "description" : "验证码发送成功",
             "schema" : {
               "$ref" : "#/definitions/SMSState"
             }
@@ -72,7 +72,7 @@
           "default" : {
             "description" : "error",
             "schema" : {
-              "$ref" : "#/definitions/Error"
+              "$ref" : "#/definitions/RespError"
             }
           }
         }
@@ -135,7 +135,7 @@
           "default" : {
             "description" : "error",
             "schema" : {
-              "$ref" : "#/definitions/Error"
+              "$ref" : "#/definitions/RespError"
             }
           }
         }
@@ -198,7 +198,7 @@
           "default" : {
             "description" : "error",
             "schema" : {
-              "$ref" : "#/definitions/Error"
+              "$ref" : "#/definitions/RespError"
             }
           }
         }
@@ -217,7 +217,7 @@
           "in" : "body",
           "description" : "第三方登录JSON",
           "schema" : {
-            "required" : [ "type", "open_id" ],
+            "required" : [ "platform", "open_id" ],
             "properties" : {
               "version" : {
                 "type" : "string",
@@ -240,14 +240,10 @@
                 "format" : "int64",
                 "description" : "时间戳(加密串要用到,供服务端验证，简单防刷)"
               },
-              "type" : {
+              "platform" : {
                 "type" : "integer",
                 "format" : "int64",
-                "description" : "第三方登录方式 0=微信,1=QQ,2=微博,3=其他"
-              },
-              "platform" : {
-                "type" : "string",
-                "description" : "第三方登录平台，当type=3时，需要传入platform来判断从哪个平台登入"
+                "description" : "第三方登录方式 1=微信,2=QQ,3=微博"
               },
               "open_id" : {
                 "type" : "string",
@@ -274,7 +270,7 @@
           "default" : {
             "description" : "error",
             "schema" : {
-              "$ref" : "#/definitions/Error"
+              "$ref" : "#/definitions/RespError"
             }
           }
         }
@@ -322,7 +318,7 @@
               },
               "password" : {
                 "type" : "string",
-                "description" : "注册密码"
+                "description" : "登录密码"
               },
               "valid_code" : {
                 "type" : "string",
@@ -358,7 +354,7 @@
           "default" : {
             "description" : "error",
             "schema" : {
-              "$ref" : "#/definitions/Error"
+              "$ref" : "#/definitions/RespError"
             }
           }
         }
@@ -419,13 +415,13 @@
           "200" : {
             "description" : "返回成功信息",
             "schema" : {
-              "$ref" : "#/definitions/State"
+              "$ref" : "#/definitions/RespState"
             }
           },
           "default" : {
             "description" : "error",
             "schema" : {
-              "$ref" : "#/definitions/Error"
+              "$ref" : "#/definitions/RespError"
             }
           }
         }
@@ -444,7 +440,7 @@
           "in" : "body",
           "description" : "绑定手机号JSON",
           "schema" : {
-            "required" : [ "phone", "valid_code" ],
+            "required" : [ "euid", "phone", "valid_code" ],
             "properties" : {
               "version" : {
                 "type" : "string",
@@ -467,6 +463,10 @@
                 "format" : "int64",
                 "description" : "时间戳(加密串要用到,供服务端验证，简单防刷)"
               },
+              "euid" : {
+                "type" : "string",
+                "description" : "用户ID"
+              },
               "phone" : {
                 "type" : "string",
                 "description" : "手机号"
@@ -482,13 +482,13 @@
           "200" : {
             "description" : "绑定成功，返回成功信息",
             "schema" : {
-              "$ref" : "#/definitions/State"
+              "$ref" : "#/definitions/RespState"
             }
           },
           "default" : {
             "description" : "error",
             "schema" : {
-              "$ref" : "#/definitions/Error"
+              "$ref" : "#/definitions/RespError"
             }
           }
         }
@@ -515,7 +515,7 @@
           },
           "default" : {
             "schema" : {
-              "$ref" : "#/definitions/Error"
+              "$ref" : "#/definitions/RespError"
             },
             "description" : "返回错误"
           }
@@ -621,7 +621,7 @@
           "default" : {
             "description" : "error",
             "schema" : {
-              "$ref" : "#/definitions/Error"
+              "$ref" : "#/definitions/RespError"
             }
           }
         }
@@ -686,7 +686,7 @@
           },
           "default" : {
             "schema" : {
-              "$ref" : "#/definitions/Error"
+              "$ref" : "#/definitions/RespError"
             },
             "description" : "返回错误"
           }
@@ -705,7 +705,7 @@
           "in" : "body",
           "description" : "修改密码JSON",
           "schema" : {
-            "required" : [ "euid", "phone", "old_pwd", "new_pwd" ],
+            "required" : [ "phone", "old_pwd", "new_pwd" ],
             "properties" : {
               "version" : {
                 "type" : "string",
@@ -751,13 +751,13 @@
           "200" : {
             "description" : "修改成功，返回成功信息",
             "schema" : {
-              "$ref" : "#/definitions/State"
+              "$ref" : "#/definitions/RespState"
             }
           },
           "default" : {
             "description" : "error",
             "schema" : {
-              "$ref" : "#/definitions/Error"
+              "$ref" : "#/definitions/RespError"
             }
           }
         }
@@ -799,7 +799,7 @@
           },
           "default" : {
             "schema" : {
-              "$ref" : "#/definitions/Error"
+              "$ref" : "#/definitions/RespError"
             },
             "description" : "返回错误"
           }
@@ -847,11 +847,15 @@
         },
         "euid" : {
           "type" : "string",
-          "description" : "用户ID"
+          "description" : "用户ID (加密串)"
         },
         "phone" : {
           "type" : "string",
           "description" : "用户手机号"
+        },
+        "password" : {
+          "type" : "string",
+          "description" : "密码"
         },
         "nick_name" : {
           "type" : "string",
@@ -869,6 +873,10 @@
         "birth_day" : {
           "type" : "string",
           "description" : "生日(格式为:yyyy-MM-dd)"
+        },
+        "now_area" : {
+          "type" : "string",
+          "description" : "现居城市"
         },
         "level" : {
           "type" : "integer",
@@ -903,7 +911,7 @@
         "status" : {
           "type" : "integer",
           "format" : "int64",
-          "description" : "状态(0=正常 1=锁定)"
+          "description" : "用户状态"
         }
       }
     },
@@ -919,7 +927,7 @@
         },
         "euid" : {
           "type" : "string",
-          "description" : "用户ID"
+          "description" : "用户ID (加密串)"
         },
         "nick_name" : {
           "type" : "string",
@@ -994,42 +1002,11 @@
           "type" : "integer",
           "format" : "int64",
           "description" : "最后一次修改时间"
-        }
-      }
-    },
-    "Photo" : {
-      "type" : "object",
-      "description" : "返回的图片信息",
-      "required" : [ "photo_id" ],
-      "properties" : {
-        "photo_id" : {
+        },
+        "status" : {
           "type" : "integer",
           "format" : "int64",
-          "description" : "图片ID"
-        },
-        "origin" : {
-          "type" : "string",
-          "description" : "原图"
-        },
-        "large" : {
-          "type" : "string",
-          "description" : "大图"
-        },
-        "middle" : {
-          "type" : "string",
-          "description" : "中图"
-        },
-        "small" : {
-          "type" : "string",
-          "description" : "小图"
-        },
-        "round" : {
-          "type" : "string",
-          "description" : "圆图(头像)"
-        },
-        "type" : {
-          "type" : "string",
-          "description" : "文件类型，后缀"
+          "description" : "用户状态"
         }
       }
     },
@@ -1051,6 +1028,26 @@
           "type" : "integer",
           "format" : "int64",
           "description" : "用户当前人民币"
+        }
+      }
+    },
+    "RespState" : {
+      "type" : "object",
+      "description" : "操作成功后返回的信息",
+      "required" : [ "state" ],
+      "properties" : {
+        "state" : {
+          "$ref" : "#/definitions/State"
+        }
+      }
+    },
+    "RespError" : {
+      "type" : "object",
+      "description" : "操作失败后返回的信息",
+      "required" : [ "error" ],
+      "properties" : {
+        "error" : {
+          "$ref" : "#/definitions/Error"
         }
       }
     },
@@ -1135,5 +1132,5 @@
     }
   },
   "schemes" : [ "https", "http" ],
-  "basePath" : "/kukuasir/Login/1.0.0"
+  "basePath" : "/kukuasir/Passport/1.0.0"
 }

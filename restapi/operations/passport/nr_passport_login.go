@@ -13,6 +13,7 @@ import (
 	"Passport/models"
 	"Passport/utils"
 	"fmt"
+	"time"
 )
 
 // NrPassportLoginHandlerFunc turns a function with the right signature into a passport login handler
@@ -74,11 +75,17 @@ func (o *NrPassportLogin) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 
 	db.Table(utils.T_USER).Where("phone=?", *Params.Body.Phone).Where("password=?", utils.MD5Encrypt(*Params.Body.Password)).Where("status=0").First(&user)
 	if user.Euid == nil {
-		code = 201
+		code = 301
 		message = "账号或密码错误"
 	} else {
+
+		// 修改最后一次登录时间
+		user.LoginAt = time.Now().Unix()
+		db.Table(utils.T_USER).Save(&user)
+
 		code = 200
 		message = "登录成功"
+
 		// 头像路径加上域名
 		if len(user.Avatar) > 0 {
 			user.Avatar = utils.T_IMAGE_DOMAIN + user.Avatar

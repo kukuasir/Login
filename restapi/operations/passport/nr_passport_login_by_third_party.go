@@ -7,8 +7,13 @@ package passport
 
 import (
 	"net/http"
-
+	_"github.com/jinzhu/gorm"
+	_"github.com/jinzhu/gorm/dialects/mysql"
 	middleware "github.com/go-openapi/runtime/middleware"
+	"Passport/models"
+	"Passport/utils"
+	"fmt"
+	"time"
 )
 
 // NrPassportLoginByThirdPartyHandlerFunc turns a function with the right signature into a passport login by third party handler
@@ -53,7 +58,42 @@ func (o *NrPassportLoginByThirdParty) ServeHTTP(rw http.ResponseWriter, r *http.
 		return
 	}
 
-	res := o.Handler.Handle(Params) // actually handle the request
+	//res := o.Handler.Handle(Params) // actually handle the request
+
+	db, err := utils.OpenConnection()
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	defer db.Close()
+
+	var res models.LoginState
+	var state models.State
+	var user models.UserBase
+
+	var code int64
+	var message string
+
+	db.Table(utils.T_USER).Where("open_id=?", *Params.Body.OpenID).Where("platform=?", *Params.Body.Platform).First(&user)
+	// 判断是否已经存在用户信息，存在则返回这个用户信息
+	if user.Euid != nil {
+		code = 200
+		message = "登录成功"
+	} else {
+		// 不存在该用户信息，则先插入
+		euid_str := utils.RandomEUID()
+		user.Euid = &euid_str
+		user.NickName = Params.Body.Name
+		user.Avatar = Params.Body.Avatar
+		user.LoginAt = user.RegisterAt
+		user.RegisterAt = time.Now().Unix()
+		db.Table(utils.T_USER).Save(&user)
+		code = 200
+		message = "登录成功"
+	}
+
+	state.UnmarshalBinary([]byte(utils.Response200(code, message)))
+	res.State = &state
+	res.Data = &user
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
