@@ -67,7 +67,6 @@ func (o *NrPassportGetbackPwd) ServeHTTP(rw http.ResponseWriter, r *http.Request
 
 	var res models.RespState
 	var state models.State
-
 	var user models.UserBase
 
 	// 定义错误信息

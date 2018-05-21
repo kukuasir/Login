@@ -31,7 +31,8 @@ type UserUpdateProfileParamsBody struct {
 	Euid *string `json:"euid"`
 
 	// 用户性别(0:保密 1:男 2:女)
-	Gender int64 `json:"gender,omitempty"`
+	// Required: true
+	Gender *int64 `json:"gender"`
 
 	// 家乡
 	HomeArea string `json:"home_area,omitempty"`
@@ -79,6 +80,13 @@ func (m *UserUpdateProfileParamsBody) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	/*
+	if err := m.validateGender(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+	*/
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -88,6 +96,15 @@ func (m *UserUpdateProfileParamsBody) Validate(formats strfmt.Registry) error {
 func (m *UserUpdateProfileParamsBody) validateEuid(formats strfmt.Registry) error {
 
 	if err := validate.Required("euid", "body", m.Euid); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *UserUpdateProfileParamsBody) validateGender(formats strfmt.Registry) error {
+
+	if err := validate.Required("gender", "body", m.Gender); err != nil {
 		return err
 	}
 

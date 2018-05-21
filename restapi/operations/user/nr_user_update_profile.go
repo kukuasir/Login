@@ -85,64 +85,68 @@ func (o *NrUserUpdateProfile) ServeHTTP(rw http.ResponseWriter, r *http.Request)
 	var sqlBuf bytes.Buffer
 	sqlBuf.WriteString("UPDATE btk_User SET ")
 	if len(Params.Body.BirthDay) > 0 {
-		sqlBuf.WriteString("birth_day="+Params.Body.BirthDay+",")
+		sqlBuf.WriteString("birth_day='"+Params.Body.BirthDay+"',")
 	}
 	if len(Params.Body.Blood) > 0 {
-		sqlBuf.WriteString("blood="+Params.Body.Blood+",")
+		sqlBuf.WriteString("blood='"+Params.Body.Blood+"',")
 	}
 	if len(Params.Body.Degree) > 0 {
-		sqlBuf.WriteString("degree="+Params.Body.Degree+",")
+		sqlBuf.WriteString("degree='"+Params.Body.Degree+"',")
 	}
-	if Params.Body.Gender > -1 {
-		sqlBuf.WriteString("gender="+strconv.FormatInt(Params.Body.Gender, 10)+",")
+	if Params.Body.Gender != nil {
+		sqlBuf.WriteString("gender="+strconv.FormatInt(*Params.Body.Gender, 10)+",")
 	}
 	if len(Params.Body.HomeArea) > 0 {
-		sqlBuf.WriteString("home_area="+Params.Body.HomeArea+",")
+		sqlBuf.WriteString("home_area='"+Params.Body.HomeArea+"',")
 	}
 	if len(Params.Body.Interest) > 0 {
-		sqlBuf.WriteString("interest="+Params.Body.Interest+",")
+		sqlBuf.WriteString("interest='"+Params.Body.Interest+"',")
 	}
 	if len(Params.Body.Marriage) > 0 {
-		sqlBuf.WriteString("marriage="+Params.Body.Marriage+",")
+		sqlBuf.WriteString("marriage='"+Params.Body.Marriage+"',")
 	}
 	if len(Params.Body.NickName) > 0 {
-		sqlBuf.WriteString("nick_name="+Params.Body.NickName+",")
+		sqlBuf.WriteString("nick_name='"+Params.Body.NickName+"',")
 	}
 	if len(Params.Body.NowArea) > 0 {
-		sqlBuf.WriteString("now_area="+Params.Body.NowArea+",")
+		sqlBuf.WriteString("now_area='"+Params.Body.NowArea+"',")
 	}
 	if len(Params.Body.Profession) > 0 {
-		sqlBuf.WriteString("profession="+Params.Body.Profession+",")
+		sqlBuf.WriteString("profession='"+Params.Body.Profession+"',")
 	}
 	if len(Params.Body.Resume) > 0 {
-		sqlBuf.WriteString("resume="+Params.Body.Resume+",")
+		sqlBuf.WriteString("resume='"+Params.Body.Resume+"',")
 	}
 	if len(Params.Body.Salary) > 0 {
-		sqlBuf.WriteString("salary="+Params.Body.Salary+",")
+		sqlBuf.WriteString("salary='"+Params.Body.Salary+"',")
 	}
 	if len(Params.Body.School) > 0 {
-		sqlBuf.WriteString("school="+Params.Body.School+",")
+		sqlBuf.WriteString("school='"+Params.Body.School+"',")
 	}
 	if len(Params.Body.Shape) > 0 {
-		sqlBuf.WriteString("shape="+Params.Body.Shape+",")
+		sqlBuf.WriteString("shape='"+Params.Body.Shape+"',")
 	}
 	if Params.Body.Stature > 0 {
-		sqlBuf.WriteString("stature="+strconv.FormatInt(Params.Body.Stature, 10)+"cm"+",")
+		sqlBuf.WriteString("stature='"+strconv.FormatInt(Params.Body.Stature, 10)+"cm"+"',")
 	}
 	if Params.Body.Weight > 0 {
-		sqlBuf.WriteString("weight="+strconv.FormatInt(Params.Body.Weight, 10)+"cm"+",")
+		sqlBuf.WriteString("weight='"+strconv.FormatInt(Params.Body.Weight, 10)+"kg"+"',")
 	}
 	sqlBuf.WriteString("update_at="+strconv.FormatInt(time.Now().Unix(), 10))
 	sqlBuf.WriteString(" WHERE status=0 AND id=?")
+	fmt.Println("sql = " + sqlBuf.String())
 	db.Exec(sqlBuf.String(), data.ID)
+
+	// 修改成功后，再查询一次
+	var tmp models.UserInfo
+	db.Table(utils.T_USER).Where("id=?", data.ID).Where("status=0").Find(&tmp)
+	tmp.Euid = *Params.Body.Euid
+	tmp.ID = 0
+	tmp.Avatar = utils.CompleteImage(tmp.Avatar)
+	res.Data = &tmp
 
 	state.UnmarshalBinary([]byte(utils.Response200(200, "修改成功")))
 	res.State = &state
-
-	data.Euid = *Params.Body.Euid
-	data.ID = 0
-	data.Avatar = utils.CompleteImage(data.Avatar)
-	res.Data = &data
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 

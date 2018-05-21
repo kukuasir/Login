@@ -108,6 +108,7 @@ func (o *NrPassportRegister) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 					tmp.Avatar = utils.CompleteImage(tmp.Avatar)
 					tmp.Euid = utils.EncryptEuid(tmp.ID)
 					tmp.ID = 0
+					tmp.Password = ""
 					res.Data = &tmp
 					code = 200
 					message = "注册成功"

@@ -91,6 +91,7 @@ func (o *NrPassportLoginByThirdParty) ServeHTTP(rw http.ResponseWriter, r *http.
 		user.Avatar = utils.CompleteImage(user.Avatar)
 		user.Euid = utils.EncryptEuid(user.ID)
 		user.ID = 0
+		user.Password = ""
 		res.Data = &user
 
 		code = 200

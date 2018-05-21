@@ -535,7 +535,7 @@
           "in" : "body",
           "description" : "修改用户资料JSON",
           "schema" : {
-            "required" : [ "euid" ],
+            "required" : [ "euid", "gender" ],
             "properties" : {
               "euid" : {
                 "type" : "string",

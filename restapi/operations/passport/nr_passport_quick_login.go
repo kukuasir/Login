@@ -101,6 +101,7 @@ func (o *NrPassportQuickLogin) ServeHTTP(rw http.ResponseWriter, r *http.Request
 				user.Avatar = utils.CompleteImage(user.Avatar)
 				user.Euid = utils.EncryptEuid(user.ID)
 				user.ID = 0
+				user.Password = ""
 				res.Data = &user
 
 			} else {
@@ -118,6 +119,7 @@ func (o *NrPassportQuickLogin) ServeHTTP(rw http.ResponseWriter, r *http.Request
 					user.Avatar = utils.CompleteImage(user.Avatar)
 					user.Euid = utils.EncryptEuid(user.ID)
 					user.ID = 0
+					user.Password = ""
 					res.Data = &user
 				}
 			}
