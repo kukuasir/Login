@@ -71,10 +71,10 @@ func (o *NrUserUpdateProfile) ServeHTTP(rw http.ResponseWriter, r *http.Request)
 	var state models.State
 	var data models.UserInfo
 
-	db.Table(utils.T_USER).Where("euid=?", Params.Body.Euid).Where("status=0").Find(&data)
+	db.Table(utils.T_USER).Where("id=?", utils.DecodeUserID(*Params.Body.Euid)).Where("status=0").Find(&data)
 
 	// 不存在的用户
-	if data.Euid == nil {
+	if data.ID == 0 {
 		state.UnmarshalBinary([]byte(utils.Response200(402, "用户不存在")))
 		res.State = &state
 		o.Context.Respond(rw, r, route.Produces, route, res)
@@ -136,11 +136,9 @@ func (o *NrUserUpdateProfile) ServeHTTP(rw http.ResponseWriter, r *http.Request)
 	state.UnmarshalBinary([]byte(utils.Response200(200, "修改成功")))
 	res.State = &state
 
-	data.ID = nil
-	// 头像路径加上域名
-	if len(data.Avatar) > 0 {
-		data.Avatar = utils.T_IMAGE_DOMAIN + data.Avatar
-	}
+	data.Euid = *Params.Body.Euid
+	data.ID = 0
+	data.Avatar = utils.CompleteImage(data.Avatar)
 	res.Data = &data
 
 	o.Context.Respond(rw, r, route.Produces, route, res)

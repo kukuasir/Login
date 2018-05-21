@@ -87,21 +87,24 @@ func (o *NrPassportQuickLogin) ServeHTTP(rw http.ResponseWriter, r *http.Request
 		} else {
 			// 通过短信记录获得的手机号去查询用户表，能查到说明正常登录
 			db.Table(utils.T_USER).Where("phone=?", sms.Phone).First(&user)
-			if user.Euid == nil {
+			if user.ID == 0 {
 
 				code = 200
 				message = "登录成功"
 
-				euid_str := utils.RandomEUID()
-
 				// 第一次快捷登录，需要把信息写入到表中
-				user.Euid = &euid_str
 				user.NickName = utils.GenNickNameBy(*Params.Body.Phone)
 				user.Phone = *Params.Body.Phone
 				user.RegisterAt = time.Now().Unix()
 				user.LoginAt = user.RegisterAt
-				res.Data = &user
 				db.Table(utils.T_USER).Save(&user)
+
+				// 写完之后再查询一次，保证用户存在
+				db.Table(utils.T_USER).Where("phone=?", user.Phone).First(&user)
+				user.Avatar = utils.CompleteImage(user.Avatar)
+				user.Euid = utils.EncryptEuid(user.ID)
+				user.ID = 0
+				res.Data = &user
 
 			} else {
 				if user.Status == 1 {
@@ -110,6 +113,12 @@ func (o *NrPassportQuickLogin) ServeHTTP(rw http.ResponseWriter, r *http.Request
 				} else {
 					code = 200
 					message = "登录成功"
+					// 修改最后一次登录时间
+					user.LoginAt = time.Now().Unix()
+					db.Table(utils.T_USER).Save(&user)
+					user.Avatar = utils.CompleteImage(user.Avatar)
+					user.Euid = utils.EncryptEuid(user.ID)
+					user.ID = 0
 					res.Data = &user
 				}
 			}

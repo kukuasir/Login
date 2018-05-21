@@ -70,10 +70,10 @@ func (o *NrUserUpdateAvatar) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 	var state models.State
 	var data models.UserInfo
 
-	db.Table(utils.T_USER).Where("euid=?", Params.Body.Euid).Where("status=0").Find(&data)
+	db.Table(utils.T_USER).Where("id=?", utils.DecodeUserID(*Params.Body.Euid)).Where("status=0").Find(&data)
 
 	// 不存在的用户
-	if data.Euid == nil {
+	if data.ID == 0 {
 		state.UnmarshalBinary([]byte(utils.Response200(402, "用户不存在")))
 		res.State = &state
 		o.Context.Respond(rw, r, route.Produces, route, res)
@@ -93,7 +93,8 @@ func (o *NrUserUpdateAvatar) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 	state.UnmarshalBinary([]byte(utils.Response200(200, "修改成功")))
 	res.State = &state
 
-	data.ID = nil
+	data.Euid = *Params.Body.Euid
+	data.ID = 0
 	data.Avatar = Params.Body.Avatar
 	res.Data = &data
 

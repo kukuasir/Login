@@ -74,7 +74,7 @@ func (o *NrPassportLogin) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	var message string
 
 	db.Table(utils.T_USER).Where("phone=?", *Params.Body.Phone).Where("password=?", utils.MD5Encrypt(*Params.Body.Password)).Where("status=0").First(&user)
-	if user.Euid == nil {
+	if user.ID == 0 {
 		code = 301
 		message = "账号或密码错误"
 	} else {
@@ -86,10 +86,9 @@ func (o *NrPassportLogin) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		code = 200
 		message = "登录成功"
 
-		// 头像路径加上域名
-		if len(user.Avatar) > 0 {
-			user.Avatar = utils.T_IMAGE_DOMAIN + user.Avatar
-		}
+		user.Avatar = utils.CompleteImage(user.Avatar)
+		user.Euid = utils.EncryptEuid(user.ID)
+		user.ID = 0
 		res.Data = &user
 	}
 

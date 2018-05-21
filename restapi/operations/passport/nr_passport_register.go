@@ -7,7 +7,6 @@ package passport
 
 import (
 	"net/http"
-	"github.com/jinzhu/gorm"
 	_"github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/go-openapi/runtime/middleware"
 	"Passport/models"
@@ -86,10 +85,10 @@ func (o *NrPassportRegister) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 			message = "验证码已失效"
 		} else {
 
-			QueryUser(db, *Params.Body.Phone, &user)
+			db.Table(utils.T_USER).Where("phone=?", *Params.Body.Phone).Find(&user)
 
 			// 用户ID不存在
-			if user.Euid == nil {
+			if user.ID == 0 {
 				// 检查用户昵称是否被占用
 				var tmp models.UserBase
 				db.Table(utils.T_USER).Where("nick_name=?", Params.Body.NickName).Find(&tmp)
@@ -101,15 +100,15 @@ func (o *NrPassportRegister) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 						nick_name = utils.GenNickNameBy(*Params.Body.Phone)
 						fmt.Println("nick_name = ", nick_name)
 					}
-					sql := "INSERT INTO btk_User(euid,nick_name,birth_day,gender,phone,password,invite_code,register_at) VALUES(?,?,?,?,?,?,?,?)"
-					db.Exec(sql, utils.RandomEUID(), nick_name, Params.Body.BirthDay, Params.Body.Gender, Params.Body.Phone, utils.MD5Encrypt(*Params.Body.Password), Params.Body.InviteCode, time.Now().Unix())
+					sql := "INSERT INTO btk_User(nick_name, birth_day, gender, phone, password, invite_code, register_at) VALUES(?,?,?,?,?,?,?,?)"
+					db.Exec(sql, nick_name, Params.Body.BirthDay, Params.Body.Gender, Params.Body.Phone, utils.MD5Encrypt(*Params.Body.Password), Params.Body.InviteCode, time.Now().Unix())
 					// 注册成功后，再去查一下
-					QueryUser(db, *Params.Body.Phone, &user)
+					db.Table(utils.T_USER).Where("phone=?", *Params.Body.Phone).Find(&tmp)
 					// 头像路径加上域名
-					if len(user.Avatar) > 0 {
-						user.Avatar = utils.T_IMAGE_DOMAIN + user.Avatar
-					}
-					res.Data = &user
+					tmp.Avatar = utils.CompleteImage(tmp.Avatar)
+					tmp.Euid = utils.EncryptEuid(tmp.ID)
+					tmp.ID = 0
+					res.Data = &tmp
 					code = 200
 					message = "注册成功"
 				} else {
@@ -128,9 +127,4 @@ func (o *NrPassportRegister) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
-}
-
-func QueryUser(db *gorm.DB, uname string, user *models.UserBase) {
-	sql := "SELECT euid,nick_name,avatar,phone,birth_day,current_coins,current_points,friends_count,gender,level,login_at,register_at FROM btk_User WHERE status = 0 && phone = " + uname
-	db.Raw(sql).Find(user)
 }

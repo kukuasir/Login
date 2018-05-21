@@ -86,8 +86,8 @@ func (o *NrPassportBindMobile) ServeHTTP(rw http.ResponseWriter, r *http.Request
 			message = "验证码已失效"
 		} else {
 
-			db.Table(utils.T_USER).Where("euid=?", *Params.Body.Euid).Where("status=0").Find(&user)
-			if user.Euid == nil {
+			db.Table(utils.T_USER).Where("id=?", utils.DecodeUserID(*Params.Body.Euid)).Where("status=0").Find(&user)
+			if user.ID == 0 {
 				code = 403
 				message = "用户不存在"
 			} else {

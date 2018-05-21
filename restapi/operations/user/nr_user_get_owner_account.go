@@ -67,8 +67,8 @@ func (o *NrUserGetOwnerAccount) ServeHTTP(rw http.ResponseWriter, r *http.Reques
 	var state models.State
 	var user models.Account
 
-	sql := "SELECT euid, current_coins, current_points, current_rmb FROM btk_User WHERE euid = ? AND status = 0"
-	db.Raw(sql, Params.Euid).Find(&user)
+	sql := "SELECT id, current_coins, current_points, current_rmb FROM btk_User WHERE id = ? AND status = 0"
+	db.Raw(sql, utils.DecodeUserID(Params.Euid)).Find(&user)
 	res.Data = &user
 
 	state.UnmarshalBinary([]byte(utils.Response200(200, "查询成功")))

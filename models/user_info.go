@@ -10,7 +10,6 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // UserInfo 返回的用户信息
@@ -30,8 +29,7 @@ type UserInfo struct {
 	Degree string `json:"degree,omitempty"`
 
 	// 用户ID (加密串)
-	// Required: true
-	Euid *string `json:"euid"`
+	Euid string `json:"euid,omitempty"`
 
 	// 性别
 	Gender int64 `json:"gender,omitempty"`
@@ -40,8 +38,7 @@ type UserInfo struct {
 	HomeArea string `json:"home_area,omitempty"`
 
 	// 用户ID
-	// Required: true
-	ID *int64 `json:"id"`
+	ID int64 `json:"id,omitempty"`
 
 	// 兴趣爱好
 	Interest string `json:"interest,omitempty"`
@@ -87,37 +84,9 @@ type UserInfo struct {
 func (m *UserInfo) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateEuid(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateID(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *UserInfo) validateEuid(formats strfmt.Registry) error {
-
-	if err := validate.Required("euid", "body", m.Euid); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *UserInfo) validateID(formats strfmt.Registry) error {
-
-	if err := validate.Required("id", "body", m.ID); err != nil {
-		return err
-	}
-
 	return nil
 }
 

@@ -89,12 +89,12 @@ func (o *NrPassportGetbackPwd) ServeHTTP(rw http.ResponseWriter, r *http.Request
 			db.Table(utils.T_USER).Where("phone=?", *Params.Body.Phone).Find(&user)
 
 			// 用户ID不存在
-			if user.Euid == nil {
+			if user.ID == 0 {
 				code = 403
 				message = "手机号不存在"
 			} else {
 				sql := "UPDATE btk_User SET password = ? WHERE euid = ? AND status = 0"
-				db.Exec(sql, utils.MD5Encrypt(*Params.Body.Password), *user.Euid)
+				db.Exec(sql, utils.MD5Encrypt(*Params.Body.Password), user.Euid)
 				code = 200
 				message = "修改成功"
 			}

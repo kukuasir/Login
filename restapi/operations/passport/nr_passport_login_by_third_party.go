@@ -75,25 +75,35 @@ func (o *NrPassportLoginByThirdParty) ServeHTTP(rw http.ResponseWriter, r *http.
 
 	db.Table(utils.T_USER).Where("open_id=?", *Params.Body.OpenID).Where("platform=?", *Params.Body.Platform).First(&user)
 	// 判断是否已经存在用户信息，存在则返回这个用户信息
-	if user.Euid != nil {
-		code = 200
-		message = "登录成功"
-	} else {
-		// 不存在该用户信息，则先插入
-		euid_str := utils.RandomEUID()
-		user.Euid = &euid_str
-		user.NickName = Params.Body.Name
-		user.Avatar = Params.Body.Avatar
-		user.LoginAt = user.RegisterAt
-		user.RegisterAt = time.Now().Unix()
+	if user.ID != 0 {
+		// 修改最后一次登录时间
+		user.LoginAt = time.Now().Unix()
 		db.Table(utils.T_USER).Save(&user)
-		code = 200
-		message = "登录成功"
+
+	} else {
+		sql := "INSERT INTO btk_User(nick_name, avatar, platform, login_at, register_at) VALUES (?,?,?,?,?)"
+		db.Raw(sql, Params.Body.Name, Params.Body.Avatar, *Params.Body.Platform, time.Now().Unix(), time.Now().Unix())
+		// 写完之后再查询一次，保证用户存在
+		db.Table(utils.T_USER).Where("open_id=?", *Params.Body.OpenID).Where("platform=?", *Params.Body.Platform).First(&user)
 	}
 
-	state.UnmarshalBinary([]byte(utils.Response200(code, message)))
-	res.State = &state
-	res.Data = &user
+	if user.ID != 0 {
+
+		user.Avatar = utils.CompleteImage(user.Avatar)
+		user.Euid = utils.EncryptEuid(user.ID)
+		user.ID = 0
+		res.Data = &user
+
+		code = 200
+		message = "登录成功"
+		state.UnmarshalBinary([]byte(utils.Response200(code, message)))
+		res.State = &state
+	} else {
+		code = 301
+		message = "用户不存在"
+		state.UnmarshalBinary([]byte(utils.Response200(code, message)))
+		res.State = &state
+	}
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 

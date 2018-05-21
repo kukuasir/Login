@@ -72,7 +72,7 @@ func (o *NrUserUpdatePwd) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 
 	// 先校验手机号与旧密码是否正确
 	db.Table(utils.T_USER).Where("phone=?", *Params.Body.Phone).Where("password=?", utils.MD5Encrypt(*Params.Body.OldPwd)).First(&user)
-	if user.Euid == nil {
+	if user.ID == 0 {
 		code = 403
 		message = "手机号不存在或密码错误"
 	} else {
