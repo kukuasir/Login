@@ -134,7 +134,7 @@ func (o *NrUserUpdateProfile) ServeHTTP(rw http.ResponseWriter, r *http.Request)
 	}
 	sqlBuf.WriteString("update_at="+strconv.FormatInt(time.Now().Unix(), 10))
 	sqlBuf.WriteString(" WHERE status=0 AND id=?")
-	db.Raw(sqlBuf.String(), data.ID)
+	db.Exec(sqlBuf.String(), data.ID)
 
 	state.UnmarshalBinary([]byte(utils.Response200(200, "修改成功")))
 	res.State = &state

@@ -94,7 +94,7 @@ func (o *NrPassportQuickLogin) ServeHTTP(rw http.ResponseWriter, r *http.Request
 
 				// 第一次快捷登录，需要把信息写入到表中
 				sql := "INSERT INTO btk_User(nick_name, phone, platform, login_at, register_at) VALUES(?,?,?,?,?)"
-				db.Raw(sql, utils.GenNickNameBy(*Params.Body.Phone), *Params.Body.Phone, utils.T_PLATFORM_QUICK_LOGIN, time.Now().Unix(), time.Now().Unix())
+				db.Exec(sql, utils.GenNickNameBy(*Params.Body.Phone), *Params.Body.Phone, utils.T_PLATFORM_QUICK_LOGIN, time.Now().Unix(), time.Now().Unix())
 
 				// 写完之后再查询一次，保证用户存在
 				db.Table(utils.T_USER).Where("phone=?", user.Phone).First(&user)
@@ -110,7 +110,7 @@ func (o *NrPassportQuickLogin) ServeHTTP(rw http.ResponseWriter, r *http.Request
 				} else {
 					// 修改最后一次登录时间
 					sql := "UPDATE btk_User SET login_at = ? WHERE id = ? AND status = 0"
-					db.Raw(sql, time.Now().Unix(), user.ID)
+					db.Exec(sql, time.Now().Unix(), user.ID)
 
 					code = 200
 					message = "登录成功"

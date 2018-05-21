@@ -78,10 +78,10 @@ func (o *NrPassportLoginByThirdParty) ServeHTTP(rw http.ResponseWriter, r *http.
 	if user.ID != 0 {
 		// 修改最后一次登录时间
 		sql := "UPDATE btk_User SET login_at = ? WHERE id = ? AND status = 0"
-		db.Raw(sql, time.Now().Unix(), user.ID)
+		db.Exec(sql, time.Now().Unix(), user.ID)
 	} else {
 		sql := "INSERT INTO btk_User(nick_name, avatar, platform, login_at, register_at) VALUES (?,?,?,?,?)"
-		db.Raw(sql, Params.Body.Name, Params.Body.Avatar, *Params.Body.Platform, time.Now().Unix(), time.Now().Unix())
+		db.Exec(sql, Params.Body.Name, Params.Body.Avatar, *Params.Body.Platform, time.Now().Unix(), time.Now().Unix())
 		// 写完之后再查询一次，保证用户存在
 		db.Table(utils.T_USER).Where("open_id=?", *Params.Body.OpenID).Where("platform=?", *Params.Body.Platform).First(&user)
 	}

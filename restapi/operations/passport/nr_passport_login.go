@@ -82,7 +82,7 @@ func (o *NrPassportLogin) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 
 		// 修改最后一次登录时间
 		sql := "UPDATE btk_User SET login_at = ? WHERE id = ? AND status = 0"
-		db.Raw(sql, time.Now().Unix(), user.ID)
+		db.Exec(sql, time.Now().Unix(), user.ID)
 
 		code = 200
 		message = "登录成功"
