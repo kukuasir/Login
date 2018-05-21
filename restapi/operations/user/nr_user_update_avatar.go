@@ -85,10 +85,9 @@ func (o *NrUserUpdateAvatar) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 		u, _ := url.Parse(Params.Body.Avatar)
 		filename = path.Base(u.Path)
 	}
-	data.Avatar = filename
-	data.UpdateAt = time.Now().Unix()
 
-	db.Table(utils.T_USER).Save(&data)
+	sql := "UPDATE btk_User SET avatar = ?, update_at = ? WHERE id = ? AND status = 0"
+	db.Raw(sql, filename, time.Now().Unix(), data.ID)
 
 	state.UnmarshalBinary([]byte(utils.Response200(200, "修改成功")))
 	res.State = &state

@@ -73,15 +73,16 @@ func (o *NrPassportLogin) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	var code int64
 	var message string
 
-	db.Table(utils.T_USER).Where("phone=?", *Params.Body.Phone).Where("password=?", utils.MD5Encrypt(*Params.Body.Password)).Where("status=0").First(&user)
+	pwd := utils.MD5Encrypt(*Params.Body.Password)
+	db.Table(utils.T_USER).Where("phone=?", *Params.Body.Phone).Where("password=?", pwd).Where("status=0").First(&user)
 	if user.ID == 0 {
 		code = 301
 		message = "账号或密码错误"
 	} else {
 
 		// 修改最后一次登录时间
-		user.LoginAt = time.Now().Unix()
-		db.Table(utils.T_USER).Save(&user)
+		sql := "UPDATE btk_User SET login_at = ? WHERE id = ? AND status = 0"
+		db.Raw(sql, time.Now().Unix(), user.ID)
 
 		code = 200
 		message = "登录成功"

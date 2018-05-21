@@ -20,6 +20,9 @@ const T_EXPIRED_SECONDS = 300
 /** 定义头像图片域名 */
 const T_IMAGE_DOMAIN = "http://inj-zone-img.bitekun.xin/resource/avatar/"
 
+/** 定义快捷登录Platform */
+const T_PLATFORM_QUICK_LOGIN = 99
+
 /** 定义返回成功后的方法 */
 type Response struct {
 	 Code int64 `json:"code"`

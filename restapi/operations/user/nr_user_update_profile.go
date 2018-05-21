@@ -13,8 +13,9 @@ import (
 	"Passport/models"
 	"Passport/utils"
 	"fmt"
-	"strconv"
 	"time"
+	"strconv"
+	"bytes"
 )
 
 // NrUserUpdateProfileHandlerFunc turns a function with the right signature into a user update profile handler
@@ -81,57 +82,59 @@ func (o *NrUserUpdateProfile) ServeHTTP(rw http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	var sql bytes.Buffer
+	sql.WriteString("UPDATE btk_User SET ")
 	if len(Params.Body.BirthDay) > 0 {
-		data.BirthDay = Params.Body.BirthDay
+		sql.WriteString("birth_day="+Params.Body.BirthDay+",")
 	}
 	if len(Params.Body.Blood) > 0 {
-		data.Blood = Params.Body.Blood
+		sql.WriteString("blood="+Params.Body.Blood+",")
 	}
 	if len(Params.Body.Degree) > 0 {
-		data.Degree = Params.Body.Degree
+		sql.WriteString("degree="+Params.Body.Degree+",")
 	}
-	if Params.Body.Gender > 0 {
-		data.Gender = Params.Body.Gender
+	if Params.Body.Gender > -1 {
+		sql.WriteString("gender="+strconv.FormatInt(Params.Body.Gender, 10)+",")
 	}
 	if len(Params.Body.HomeArea) > 0 {
-		data.HomeArea = Params.Body.HomeArea
+		sql.WriteString("home_area="+Params.Body.HomeArea+",")
 	}
 	if len(Params.Body.Interest) > 0 {
-		data.Interest = Params.Body.Interest
+		sql.WriteString("interest="+Params.Body.Interest+",")
 	}
 	if len(Params.Body.Marriage) > 0 {
-		data.Marriage = Params.Body.Marriage
+		sql.WriteString("marriage="+Params.Body.Marriage+",")
 	}
 	if len(Params.Body.NickName) > 0 {
-		data.NickName = Params.Body.NickName
+		sql.WriteString("nick_name="+Params.Body.NickName+",")
 	}
 	if len(Params.Body.NowArea) > 0 {
-		data.NowArea = Params.Body.NowArea
+		sql.WriteString("now_area="+Params.Body.NowArea+",")
 	}
 	if len(Params.Body.Profession) > 0 {
-		data.Profession = Params.Body.Profession
+		sql.WriteString("profession="+Params.Body.Profession+",")
 	}
 	if len(Params.Body.Resume) > 0 {
-		data.Resume = Params.Body.Resume
+		sql.WriteString("resume="+Params.Body.Resume+",")
 	}
 	if len(Params.Body.Salary) > 0 {
-		data.Salary = Params.Body.Salary
+		sql.WriteString("salary="+Params.Body.Salary+",")
 	}
 	if len(Params.Body.School) > 0 {
-		data.School = Params.Body.School
+		sql.WriteString("school="+Params.Body.School+",")
 	}
 	if len(Params.Body.Shape) > 0 {
-		data.Shape = Params.Body.Shape
+		sql.WriteString("shape="+Params.Body.Shape+",")
 	}
 	if Params.Body.Stature > 0 {
-		data.Stature = strconv.FormatInt(Params.Body.Stature, 10) + "cm"
+		sql.WriteString("stature="+strconv.FormatInt(Params.Body.Stature, 10)+"cm"+",")
 	}
 	if Params.Body.Weight > 0 {
-		data.Weight = strconv.FormatInt(Params.Body.Weight, 10) + "cm"
+		sql.WriteString("weight="+strconv.FormatInt(Params.Body.Weight, 10)+"cm"+",")
 	}
-
-	data.UpdateAt = time.Now().Unix()
-	db.Table(utils.T_USER).Save(&data)
+	sql.WriteString("update_at="+strconv.FormatInt(time.Now().Unix(), 10))
+	sql.WriteString(" WHERE status=0 AND id=?")
+	db.Raw(sql.String(), data.ID)
 
 	state.UnmarshalBinary([]byte(utils.Response200(200, "修改成功")))
 	res.State = &state
