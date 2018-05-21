@@ -83,7 +83,7 @@ func (o *NrUserUpdateProfile) ServeHTTP(rw http.ResponseWriter, r *http.Request)
 	}
 
 	var sqlBuf bytes.Buffer
-	sql.WriteString("UPDATE btk_User SET ")
+	sqlBuf.WriteString("UPDATE btk_User SET ")
 	if len(Params.Body.BirthDay) > 0 {
 		sqlBuf.WriteString("birth_day="+Params.Body.BirthDay+",")
 	}
