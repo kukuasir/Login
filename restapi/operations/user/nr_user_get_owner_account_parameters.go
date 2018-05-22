@@ -37,6 +37,11 @@ type NrUserGetOwnerAccountParams struct {
 	  In: query
 	*/
 	Euid string
+
+	/**
+	  In: query
+	*/
+	Platform int64
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface

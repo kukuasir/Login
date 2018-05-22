@@ -505,6 +505,13 @@
           "type" : "string",
           "required" : true,
           "description" : "加密后的用户ID"
+        },
+        {
+          "in" : "query",
+          "name" : "platform",
+          "type" : "integer",
+          "format": "int64",
+          "description" : "可忽略 100:TT💥"
         } ],
         "responses" : {
           "200" : {
