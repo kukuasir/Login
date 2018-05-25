@@ -10,9 +10,6 @@ import (
 	_"github.com/jinzhu/gorm"
 	_"github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/go-openapi/runtime/middleware"
-	"Passport/models"
-	"Passport/utils"
-	"fmt"
 )
 
 // NrUserGetOwnerAccountHandlerFunc turns a function with the right signature into a user get owner account handler
@@ -57,22 +54,31 @@ func (o *NrUserGetOwnerAccount) ServeHTTP(rw http.ResponseWriter, r *http.Reques
 
 	//res := o.Handler.Handle(Params) // actually handle the request
 
-	db, err := utils.OpenConnection()
-	if err != nil {
-		fmt.Println(err.Error())
+	/**
+	  100💥
+	*/
+	if Params.Platform == 100 {
+		state.UnmarshalBinary([]byte(utils.Response200(0, "查询成功")))
+		res.State = &state
+	} else {
+
+		db, err := utils.OpenConnection()
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+		defer db.Close()
+
+		var res models.AccountState
+		var state models.State
+		var user models.Account
+
+		sql := "SELECT id, current_coins, current_points, current_rmb FROM btk_User WHERE id = ? AND status = 0"
+		db.Raw(sql, utils.DecodeUserID(Params.Euid)).Find(&user)
+		res.Data = &user
+
+		state.UnmarshalBinary([]byte(utils.Response200(200, "查询成功")))
+		res.State = &state
 	}
-	defer db.Close()
-
-	var res models.AccountState
-	var state models.State
-	var user models.Account
-
-	sql := "SELECT id, current_coins, current_points, current_rmb FROM btk_User WHERE id = ? AND status = 0"
-	db.Raw(sql, utils.DecodeUserID(Params.Euid)).Find(&user)
-	res.Data = &user
-
-	state.UnmarshalBinary([]byte(utils.Response200(200, "查询成功")))
-	res.State = &state
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 

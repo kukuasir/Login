@@ -80,12 +80,10 @@ func (m *UserUpdateProfileParamsBody) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	/*
 	if err := m.validateGender(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
-	*/
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
