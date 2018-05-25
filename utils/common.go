@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 )
 
 /** 所需的表名定义 */
@@ -42,7 +43,7 @@ func Response200(code int64, msg string) string {
 func RandToken(len int) string {
 	b := make([]byte, len)
 	rand.Read(b)
-	return fmt.Sprintf("%x", b)
+	return fmt.Sprintf("%x", b) + strconv.FormatInt(time.Now().Unix(), 10)
 }
 
 /**

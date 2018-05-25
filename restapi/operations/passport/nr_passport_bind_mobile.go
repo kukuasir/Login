@@ -91,10 +91,17 @@ func (o *NrPassportBindMobile) ServeHTTP(rw http.ResponseWriter, r *http.Request
 				code = 403
 				message = "用户不存在"
 			} else {
-				sql := "UPDATE btk_User SET phone = ? WHERE euid = ? AND status = 0"
-				db.Exec(sql, *Params.Body.Phone, *Params.Body.Euid)
-				code = 200
-				message = "修改成功"
+				var count int64
+				db.Table(utils.T_USER).Where("phone=?", *Params.Body.Phone).Where("status=0").Count(&count)
+				if count > 0 {
+					code = 405
+					message = "手机号已被使用"
+				} else {
+					sql := "UPDATE btk_User SET phone = ? WHERE euid = ? AND status = 0"
+					db.Exec(sql, *Params.Body.Phone, *Params.Body.Euid)
+					code = 200
+					message = "绑定成功"
+				}
 			}
 		}
 	}
