@@ -14,6 +14,7 @@ import (
 	"github.com/go-openapi/validate"
 
 	strfmt "github.com/go-openapi/strfmt"
+	"strconv"
 )
 
 // NewNrUserGetOwnerAccountParams creates a new NrUserGetOwnerAccountParams object
@@ -57,6 +58,11 @@ func (o *NrUserGetOwnerAccountParams) BindRequest(r *http.Request, route *middle
 		res = append(res, err)
 	}
 
+	qPlatform, qhkPlatform, _ := qs.GetOK("platform")
+	if err := o.bindPlatform(qPlatform, qhkPlatform, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -77,5 +83,14 @@ func (o *NrUserGetOwnerAccountParams) bindEuid(rawData []string, hasKey bool, fo
 
 	o.Euid = raw
 
+	return nil
+}
+
+func (o *NrUserGetOwnerAccountParams) bindPlatform(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw int64
+	if len(rawData) > 0 {
+		raw, _ = strconv.ParseInt(rawData[len(rawData)-1], 10, 64)
+	}
+	o.Platform = raw
 	return nil
 }

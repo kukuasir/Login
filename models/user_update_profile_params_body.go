@@ -102,9 +102,11 @@ func (m *UserUpdateProfileParamsBody) validateEuid(formats strfmt.Registry) erro
 
 func (m *UserUpdateProfileParamsBody) validateGender(formats strfmt.Registry) error {
 
+	/*
 	if err := validate.Required("gender", "body", m.Gender); err != nil {
 		return err
 	}
+	*/
 
 	return nil
 }
