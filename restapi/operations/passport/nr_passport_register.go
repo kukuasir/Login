@@ -153,11 +153,11 @@ func (o *NrPassportRegister) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 			code = 200
 			message = "注册成功"
 		} else {
-			code = 202
+			code = 302
 			message = "用户名已被注册，请更换用户名"
 		}
 	} else {
-		code = 203
+		code = 303
 		message = "手机号已被注册"
 	}
 
