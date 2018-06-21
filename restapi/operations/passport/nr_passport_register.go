@@ -73,6 +73,7 @@ func (o *NrPassportRegister) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 	var code int64
 	var message string
 
+	/** --Begin-- 验证码由ShareSDK来产生并校验，程序无需校验
 	// 先判断验证码是否正确
 	var sms SMSRecord
 	db.Table(utils.T_SMS).Where("phone=?", *Params.Body.Phone).Where("code=?", *Params.Body.ValidCode).Where("type=0").Order("create_at DESC").First(&sms)
@@ -121,6 +122,43 @@ func (o *NrPassportRegister) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 				message = "手机号已被注册"
 			}
 		}
+	}
+	--End-- **/
+
+	db.Table(utils.T_USER).Where("phone=?", *Params.Body.Phone).Find(&user)
+
+	// 用户ID不存在
+	if user.ID == 0 {
+		// 检查用户昵称是否被占用
+		var tmp models.UserBase
+		db.Table(utils.T_USER).Where("nick_name=?", Params.Body.NickName).Find(&tmp)
+		if len(tmp.NickName) == 0 {
+
+			// 如果没有NickName，默认使用手机号作为昵称
+			nick_name := Params.Body.NickName
+			if len(Params.Body.NickName) == 0 {
+				nick_name = utils.GenNickNameBy(*Params.Body.Phone)
+				fmt.Println("nick_name = ", nick_name)
+			}
+			sql := "INSERT INTO btk_User(nick_name, birth_day, gender, phone, password, invite_code, register_at) VALUES(?,?,?,?,?,?,?,?)"
+			db.Exec(sql, nick_name, Params.Body.BirthDay, Params.Body.Gender, Params.Body.Phone, utils.MD5Encrypt(*Params.Body.Password), Params.Body.InviteCode, time.Now().Unix())
+			// 注册成功后，再去查一下
+			db.Table(utils.T_USER).Where("phone=?", *Params.Body.Phone).Find(&tmp)
+			// 头像路径加上域名
+			tmp.Avatar = utils.CompleteImage(tmp.Avatar)
+			tmp.Euid = utils.EncryptEuid(tmp.ID)
+			tmp.ID = 0
+			tmp.Password = ""
+			res.Data = &tmp
+			code = 200
+			message = "注册成功"
+		} else {
+			code = 202
+			message = "用户名已被注册，请更换用户名"
+		}
+	} else {
+		code = 203
+		message = "手机号已被注册"
 	}
 
 	state.UnmarshalBinary([]byte(utils.Response200(code, message)))
