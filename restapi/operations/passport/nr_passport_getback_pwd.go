@@ -12,7 +12,6 @@ import (
 	"Passport/models"
 	"Passport/utils"
 	"fmt"
-	"time"
 )
 
 // NrPassportGetbackPwdHandlerFunc turns a function with the right signature into a passport getback pwd handler
@@ -73,6 +72,7 @@ func (o *NrPassportGetbackPwd) ServeHTTP(rw http.ResponseWriter, r *http.Request
 	var code int64
 	var message string
 
+	/** --Begin-- 验证码由ShareSDK来产生并校验，程序无需校验
 	// 先判断验证码是否正确
 	var sms SMSRecord
 	db.Table(utils.T_SMS).Where("phone=?", *Params.Body.Phone).Where("code=?", *Params.Body.ValidCode).Where("type=3").Order("create_at DESC").First(&sms)
@@ -98,6 +98,20 @@ func (o *NrPassportGetbackPwd) ServeHTTP(rw http.ResponseWriter, r *http.Request
 				message = "修改成功"
 			}
 		}
+	}
+	--End-- **/
+
+	db.Table(utils.T_USER).Where("phone=?", *Params.Body.Phone).Find(&user)
+
+	// 用户ID不存在
+	if user.ID == 0 {
+		code = 403
+		message = "手机号不存在"
+	} else {
+		sql := "UPDATE btk_User SET password = ? WHERE euid = ? AND status = 0"
+		db.Exec(sql, utils.MD5Encrypt(*Params.Body.Password), user.Euid)
+		code = 200
+		message = "修改成功"
 	}
 
 	state.UnmarshalBinary([]byte(utils.Response200(code, message)))
